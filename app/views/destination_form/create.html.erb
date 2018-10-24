@@ -1,8 +1,24 @@
+
+<h4>出発地：<%= @q_ori %></h4>
+
+<% @array.each do |a| %>
+    <h4>候補地：<%= a %></h4>
+<% end %>
+
 <h1>結果</h1>
-<%= @q1 %>
-</br>
-<%= @q2 %>
-</br>
-<%= @distance %>
-</br>
+
+<!-- 矢印を最後だけ出さないように分岐 -->
+
+<% loop_counter = 1 %>
+<% @hash_new.each_key do |h| %>
+    <% if @hash_new.length != loop_counter %>
+        <%= h %> →
+    <% else %>
+        <%= h %> の順に行くべき
+    <% end %>
+    <% loop_counter = loop_counter +1 %>
+<% end %>
+
+
+
 
