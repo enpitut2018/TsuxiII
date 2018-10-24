@@ -13,7 +13,7 @@ class DestinationFormController < ApplicationController
     @array = [@q1, @q2]
     @array_2 = []
     @array.each do |d|
-      @uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q_ori+'&destinations='+d+'&mode=driving&key=AIzaSyDqllFb4Hk7607Vye2ExMPhLRlEm3dlnSw')
+      @uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q_ori+'&destinations='+d+'&mode=driving&key='+ENV['API_KEY'])
       uri = URI.parse(@uri)
       json = Net::HTTP.get(uri)
       @result = JSON.parse(json)
@@ -33,7 +33,7 @@ class DestinationFormController < ApplicationController
               @zikan_new = (@hour.to_s + '.' + @min.to_s).to_f
               @zikan_array.push(@zikan_new)
           end
-      elsif zikan =~ /\smins|\min/
+      elsif zikan =~ /\smins|\smin/
           @min = $`
           @zikan_new = ("0." + @min.to_s).to_f
           @zikan_array.push(@zikan_new)
