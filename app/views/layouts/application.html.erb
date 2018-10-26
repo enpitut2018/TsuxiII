@@ -20,13 +20,14 @@
   <body>
     <%= yield %>
     <div id='map'></div>
+    
     <script>
       function initMap() {
         // ルート検索の条件
         var request = {
-          origin: "<%= @q_ori %>", // 出発地
-          destination: "<%= @distant %>",// 目的地
-          waypoints: [{ location: "<%= @near %>"}], //経由地
+          origin: origin, // 出発地
+          destination: distant,// 目的地
+          waypoints: [{ location: near}], //経由地
           travelMode: google.maps.DirectionsTravelMode.DRIVING, // 交通手段(歩行。DRIVINGの場合は車)
           // optimizeWaypoints: true,
         };
