@@ -19,18 +19,6 @@ class DestinationFormController < ApplicationController
       @result = JSON.parse(json)
       @array_2.push(@result)
     end
-
-    # 時間指定のための2地点間の距離や時間を取得する
-    @result2 =[]
-    @uri2 = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q1+'&destinations='+@q2+'&mode=driving&key='+ENV['API_KEY'])
-    uri = URI.parse(@uri)
-    json = Net::HTTP.get(uri)
-    @result2 = JSON.parse(json)
-    # 中継時間の計算メソッド
-    @chukeijikan = @result2['rows'][0]['elements'][0]['duration']['text']
-
-
-
     
     # 例) 13 hours 30 mins　を 13.3 の形にして配列のぶち込む
     # ただし　1 hour とか 1 min もあるから場合分け
@@ -67,6 +55,16 @@ class DestinationFormController < ApplicationController
    @near =  @array[@smallvalue]
    @distant = @array[@bigvalue]
 
+
+    # 時間指定のための2地点間の距離や時間を取得する
+    @result2 =[]
+    # @uri2 = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@near+'&destinations='+@distant+'&mode=driving&key='+ENV['API_KEY'])
+    @uri2 = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@near+'&destinations='+@distant+'&mode=driving&key='+ENV['API_KEY'])
+    uri = URI.parse(@uri)
+    json = Net::HTTP.get(uri)
+    @result2 = JSON.parse(json)
+    # 中継時間の計算メソッド
+    @chukeijikan = @result2['rows'][0]['elements'][0]['duration']['text']
 
     # スタートから近い地点までの時間
     @shokijikan = @array_2[@smallvalue]['rows'][0]['elements'][0]['duration']['text']
