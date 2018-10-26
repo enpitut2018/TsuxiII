@@ -1,20 +1,23 @@
 
 <h4>出発地：<%= @q_ori %></h4>
 
+<% loop_counter = 1 %>
 <% @array.each do |a| %>
-    <h4>候補地：<%= a %></h4>
+    <h4>候補地(<% loop_counter.to_s %>)：<%= a %></h4>
+    <% loop_counter = loop_counter +1 %>
 <% end %>
 
-<h1>結果</h1>
+<h1>検索結果</h1>
 
 <!-- 矢印を最後だけ出さないように分岐 -->
 
+出発地点(A):<%= @q_ori %> →
 <% loop_counter = 1 %>
 <% @hash_new.each_key do |h| %>
     <% if @hash_new.length != loop_counter %>
-        <%= h %> →
+        経由地点(B):<%= h %> →
     <% else %>
-        <%= h %> の順に行くべき
+        到着地点(C)<%= h %> の順に行くべきである
     <% end %>
     <% loop_counter = loop_counter +1 %>
 <% end %>
