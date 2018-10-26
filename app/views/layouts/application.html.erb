@@ -8,6 +8,7 @@
 　    origin ="<%= @q_ori %>";
       near = "<%= @near %>";
       distant = "<%= @distant %>";
+      ar = "<%= @array_2 %>";
     </script>
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
@@ -20,7 +21,7 @@
   <body>
     <%= yield %>
     <div id='map'></div>
-    
+
     <script>
       function initMap() {
         // ルート検索の条件

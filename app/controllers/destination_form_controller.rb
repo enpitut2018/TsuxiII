@@ -13,12 +13,21 @@ class DestinationFormController < ApplicationController
     @array = [@q1, @q2]
     @array_2 = []
     @array.each do |d|
-      @uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q_ori+'&destinations='+d+'&mode=driving&key=AIzaSyDqllFb4Hk7607Vye2ExMPhLRlEm3dlnSw')
+      @uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q_ori+'&destinations='+d+'&mode=driving&key='+ENV['API_KEY'])
       uri = URI.parse(@uri)
       json = Net::HTTP.get(uri)
       @result = JSON.parse(json)
       @array_2.push(@result)
     end
+
+    # 時間指定のための2地点間の距離や時間を取得する
+    # @array_3 =[]
+    # @uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q1+'&destinations='+@q2+'&mode=driving&key=AIzaSyDqllFb4Hk7607Vye2ExMPhLRlEm3dlnSw')
+    # uri = URI.parse(@uri)
+    # json = Net::HTTP.get(uri)
+    # @result = JSON.parse(json)
+    # @array_2.push(@result)
+
     
     # 例) 13 hours 30 mins　を 13.3 の形にして配列のぶち込む
     # ただし　1 hour とか 1 min もあるから場合分け
