@@ -21,12 +21,15 @@ class DestinationFormController < ApplicationController
     end
 
     # 時間指定のための2地点間の距離や時間を取得する
-    # @array_3 =[]
-    # @uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q1+'&destinations='+@q2+'&mode=driving&key=AIzaSyDqllFb4Hk7607Vye2ExMPhLRlEm3dlnSw')
-    # uri = URI.parse(@uri)
-    # json = Net::HTTP.get(uri)
-    # @result = JSON.parse(json)
-    # @array_2.push(@result)
+    @result2 =[]
+    @uri2 = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q1+'&destinations='+@q2+'&mode=driving&key='+ENV['API_KEY'])
+    uri = URI.parse(@uri)
+    json = Net::HTTP.get(uri)
+    @result2 = JSON.parse(json)
+    # 中継時間の計算メソッド
+    @chukeijikan = @result2['rows'][0]['elements'][0]['duration']['text']
+
+
 
     
     # 例) 13 hours 30 mins　を 13.3 の形にして配列のぶち込む
@@ -63,6 +66,31 @@ class DestinationFormController < ApplicationController
     end
    @near =  @array[@smallvalue]
    @distant = @array[@bigvalue]
+
+
+    # スタートから近い地点までの時間
+    @shokijikan = @array_2[@smallvalue]['rows'][0]['elements'][0]['duration']['text']
+    # 初期時間と中継時間を配列化する
+    @totaltime = Array.new()
+    @totaltime.push(@shokijikan)
+    @totaltime.push(@chukeijikan)
+    @totalhour = 0
+    @totalminute = 0
+
+    @totaltime.each do |d|
+      if d =~ /\shours|\shour/
+        @totalhour = @totalhour + $`.to_i
+        if d =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
+            @totalminute = @totalminute + $+.to_i
+        end
+      elsif d =~ /\smins|\min/
+        @totalminute = @totalminute + $`.to_i
+      end
+    end
+    if @totalminute > 60
+      @totalhour += 1
+      @totalminute = @totalminute - 60
+    end
 
   end
 
