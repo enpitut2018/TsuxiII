@@ -40,13 +40,21 @@ class DestinationFormController < ApplicationController
       end
   
     end
+   
   
     # 2つの配列を1つのハッシュ{ 行き先 => かかる時間 }にする
     # value(かかる時間)でソート
     hash = Hash[@array.zip @zikan_array]
     @hash_new = Hash[hash.sort_by{ |_, v| v }]
+    @bigvalue = 0
+    @smallvalue = 1
+    if @zikan_array[0] < @zikan_array[1]
+      @bigvalue = 1
+      @smallvalue = 0
+    end
+   @near =  @array[@smallvalue]
+   @distant = @array[@bigvalue]
 
-    
   end
 
 end
