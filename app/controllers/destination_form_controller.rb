@@ -25,12 +25,14 @@ class DestinationFormController < ApplicationController
     @zikan_array = Array.new()
 
     @array_2.each do |d|
-      zikan = d['rows'][0]['elements'][0]['duration']['text']
+      zikan = d['rows'][0]['elements'][0]['duration']['text'] # '1hour20min'が入る
       if zikan =~ /\shours|\shour/
-          @hour = $`
+          @hour = $`     # "1 hour 20mins"のhourより前の数字が抜き出される
           if zikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-              @min = $+
-              @zikan_new = (@hour.to_s + '.' + @min.to_s).to_f
+              @min = $+.to_f
+              @min_to_hour = @min / 60
+              @zikan_new = @hour + @min_to_hour
+              # @zikan_new = (@hour.to_s + '.' + @min.to_s).to_f
               @zikan_array.push(@zikan_new)
           end
       elsif zikan =~ /\smins|\smin/
