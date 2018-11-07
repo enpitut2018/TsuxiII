@@ -1,8 +1,7 @@
-
 <h4>出発地：<%= @q_ori %></h4>
 
 <% loop_counter = 1 %>
-<% @array.each do |a| %>
+<% @keiyu_array.each do |a| %>
     <h4>候補地(<%= loop_counter.to_s %>)：<%= a %></h4>
     <% loop_counter = loop_counter +1 %>
 <% end %>
@@ -13,9 +12,9 @@
 </br>
 ↓
 </br>
-<%= @shoki_h %>:<%= @shoki_m %>  <%= @near%>  
+<%= @sk_h %>:<%= @sk_m %>  <%= @near1 %>  
 </br>
 ↓
 </br>
-<%= @chukei_h %>:<%= @chukei_m %>  <%= @distant%> 
+<%= @kk_h %>:<%= @kk_m %>  <%= @near2 %> 
 <br>
