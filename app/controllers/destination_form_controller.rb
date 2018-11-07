@@ -10,6 +10,8 @@ class DestinationFormController < ApplicationController
     @q_ori = params[:q_ori]
     @q1 = params[:q1]
     @q2 = params[:q2]
+    @h = params[:h]
+    @m = params[:m]
     @array = [@q1, @q2]
     @array_2 = []
     @array.each do |d|
@@ -19,6 +21,18 @@ class DestinationFormController < ApplicationController
       @result = JSON.parse(json)
       @array_2.push(@result)
     end
+
+    # 時間指定のための2地点間の距離や時間を取得する
+    @result2 =[]
+    @uri2 = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q1+'&destinations='+@q2+'&mode=driving&key='+ENV['API_KEY'])
+    uri = URI.parse(@uri)
+    json = Net::HTTP.get(uri)
+    @result2 = JSON.parse(json)
+    # 中継時間の計算メソッド
+    @chukeijikan = @result2['rows'][0]['elements'][0]['duration']['text']
+
+
+
     
     # 例) 13 hours 30 mins　を 13.3 の形にして配列のぶち込む
     # ただし　1 hour とか 1 min もあるから場合分け
@@ -33,7 +47,7 @@ class DestinationFormController < ApplicationController
               @zikan_new = (@hour.to_s + '.' + @min.to_s).to_f
               @zikan_array.push(@zikan_new)
           end
-      elsif zikan =~ /\smins|\smin/
+      elsif zikan =~ /\smins|\min/
           @min = $`
           @zikan_new = ("0." + @min.to_s).to_f
           @zikan_array.push(@zikan_new)
@@ -55,8 +69,37 @@ class DestinationFormController < ApplicationController
    @near =  @array[@smallvalue]
    @distant = @array[@bigvalue]
 
+
+    # スタートから近い地点までの時間
+    @shokijikan = @array_2[@smallvalue]['rows'][0]['elements'][0]['duration']['text']
+
+    if @shokijikan =~ /\shours|\shour/
+      @shoki_h = $`
+      @shoki_h = @shoki_h.to_i + @h.to_i
+      if @shokijikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
+        @shoki_m = $+
+        @shoki_m = @shoki_m.to_i + @m.to_i
+        if @shoki_m > 60
+          @shoki_h += 1
+          @shoki_m = @shoki_m - 60
+        end
+      end
+    end
+
+    if @chukeijikan =~ /\shours|\shour/
+      @chukei_h = $`
+      @chukei_h = @shoki_h.to_i + @h.to_i
+      if @chukeijikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
+        @chukei_m = $+
+        @chukei_m = @shoki_m.to_i + @m.to_i
+        if @chukei_m > 60
+          @chukei_h += 1
+          @chukei_m = @chukei_m - 60
+        end
+      end
+    end
+
+  
   end
 
 end
-
-

@@ -9,19 +9,13 @@
 
 <h1>検索結果</h1>
 
-<!-- 矢印を最後だけ出さないように分岐 -->
-
-出発地点(A):<%= @q_ori %> →
-<% loop_counter = 1 %>
-<% @hash_new.each_key do |h| %>
-    <% if @hash_new.length != loop_counter %>
-        経由地点(B):<%= h %> →
-    <% else %>
-        到着地点(C)<%= h %> の順に行くべきである
-    <% end %>
-    <% loop_counter = loop_counter +1 %>
-<% end %>
-
-
-
-
+<%= @h %>:<%= @m %>  <%= @q_ori %> 
+</br>
+↓
+</br>
+<%= @shoki_h %>:<%= @shoki_m %>  <%= @near%>  
+</br>
+↓
+</br>
+<%= @chukei_h %>:<%= @chukei_m %>  <%= @distant%> 
+<br>
