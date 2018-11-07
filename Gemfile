@@ -10,6 +10,7 @@ end
 gem 'rails', '~> 5.1.6'
 gem 'dotenv-rails'
 gem 'bootstrap', '~> 4.1.3'
+gem 'jquery-rails'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
 # Use SCSS for stylesheets
