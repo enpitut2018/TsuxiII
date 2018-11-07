@@ -7,101 +7,106 @@ class DestinationFormController < ApplicationController
   end
 
   def create
+    
     @q_ori = params[:q_ori]
     @q1 = params[:q1]
     @q2 = params[:q2]
     @h = params[:h]
     @m = params[:m]
-    @array = [@q1, @q2]
-    @array_2 = []
-    @array.each do |d|
-      @uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q_ori+'&destinations='+d+'&mode=driving&key='+ENV['API_KEY'])
-      uri = URI.parse(@uri)
-      json = Net::HTTP.get(uri)
-      @result = JSON.parse(json)
-      @array_2.push(@result)
+    @keiyu_array = [@q1, @q2] #経由地
+    @sk_json_array = [] #出発地から経由地のjson(s:start, k:keiyu)
+    @kk_json_array = [] #経由地間のjson
+    @sk_zikan_array =[] #出発地から経由地の時間
+
+    # スタートから経由地の時間を取得する
+    @keiyu_array.each do |d|
+      uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q_ori+'&destinations='+d+'&mode=driving&key='+ENV['API_KEY'])
+      json = Net::HTTP.get(URI.parse(uri))
+      @sk_json_array.push(JSON.parse(json))
     end
 
-    # 時間指定のための2地点間の距離や時間を取得する
-    @result2 =[]
-    @uri2 = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q1+'&destinations='+@q2+'&mode=driving&key='+ENV['API_KEY'])
-    uri = URI.parse(@uri)
-    json = Net::HTTP.get(uri)
-    @result2 = JSON.parse(json)
-    # 中継時間の計算メソッド
-    @chukeijikan = @result2['rows'][0]['elements'][0]['duration']['text']
+    # 経由地間の時間を取得する
+    uri2 = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q1+'&destinations='+@q2+'&mode=driving&key='+ENV['API_KEY'])
+    json = Net::HTTP.get(URI.parse(uri2))
+    @kk_json_array = JSON.parse(json)
 
-
-
-    
-    # 例) 13 hours 30 mins　を 13.3 の形にして配列のぶち込む
-    # ただし　1 hour とか 1 min もあるから場合分け
-    @zikan_array = Array.new()
-
-    @array_2.each do |d|
-      zikan = d['rows'][0]['elements'][0]['duration']['text'] # '1hour20min'が入る
+    @sk_json_array.each do |d|
+      zikan = d['rows'][0]['elements'][0]['duration']['text']
       if zikan =~ /\shours|\shour/
-          @hour = $`     # "1 hour 20mins"のhourより前の数字が抜き出される
+          hour = $`
           if zikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-              @min = $+.to_f
-              @min_to_hour = @min / 60
-              @zikan_new = @hour + @min_to_hour
-              # @zikan_new = (@hour.to_s + '.' + @min.to_s).to_f
-              @zikan_array.push(@zikan_new)
+              zikan_new = (hour.to_s + '.' + $+.to_s).to_f
+              @sk_zikan_array.push(zikan_new)
           end
       elsif zikan =~ /\smins|\min/
-          @min = $`
-          @zikan_new = ("0." + @min.to_s).to_f
-          @zikan_array.push(@zikan_new)
+          zikan_new = ("0." + $`.to_s).to_f
+          @sk_zikan_array.push(zikan_new)
       end
   
     end
    
   
-    # 2つの配列を1つのハッシュ{ 行き先 => かかる時間 }にする
-    # value(かかる時間)でソート
-    hash = Hash[@array.zip @zikan_array]
-    @hash_new = Hash[hash.sort_by{ |_, v| v }]
-    @bigvalue = 0
-    @smallvalue = 1
-    if @zikan_array[0] < @zikan_array[1]
-      @bigvalue = 1
-      @smallvalue = 0
+    if @sk_zikan_array[0] < @sk_zikan_array[1]
+      big = 1
+      small = 0
+    else
+      big = 0
+      small = 1
     end
-   @near =  @array[@smallvalue]
-   @distant = @array[@bigvalue]
+
+    @near1 = @keiyu_array[small]
+    @near2 = @keiyu_array[big]
 
 
-    # スタートから近い地点までの時間
-    @shokijikan = @array_2[@smallvalue]['rows'][0]['elements'][0]['duration']['text']
+    # スタートから近い経由地までの時間
+    @sk_zikan = @sk_json_array[small]['rows'][0]['elements'][0]['duration']['text']
+    # 近い経由地から経由地までの時間
+    @kk_zikan = @kk_json_array['rows'][0]['elements'][0]['duration']['text']
 
-    if @shokijikan =~ /\shours|\shour/
-      @shoki_h = $`
-      @shoki_h = @shoki_h.to_i + @h.to_i
-      if @shokijikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-        @shoki_m = $+
-        @shoki_m = @shoki_m.to_i + @m.to_i
-        if @shoki_m > 60
-          @shoki_h += 1
-          @shoki_m = @shoki_m - 60
+
+    ###### s(スタート)からk(経由地1)までの時間演算
+    if @sk_zikan =~ /\shours|\shour/
+      @sk_h = $`.to_i + @h.to_i
+      if @sk_zikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
+        @sk_m = $+.to_i + @m.to_i
+        if @sk_m > 60
+          @sk_h += 1
+          @sk_m -= 60
         end
+      end
+    elsif @sk_zikan =~ /\smins|\min/
+      @sk_m = $`.to_i + @m.to_i
+      if @sk_m > 60
+        @sk_h += 1
+        @sk_m -= 60
+      else
+        @sk_h = @h
       end
     end
 
-    if @chukeijikan =~ /\shours|\shour/
-      @chukei_h = $`
-      @chukei_h = @shoki_h.to_i + @h.to_i
-      if @chukeijikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-        @chukei_m = $+
-        @chukei_m = @shoki_m.to_i + @m.to_i
-        if @chukei_m > 60
-          @chukei_h += 1
-          @chukei_m = @chukei_m - 60
+    ###### k(経由地1)からk(経由地2)までの時間演算
+    if @kk_zikan =~ /\shours|\shour/
+      @kk_h = @sk_h.to_i + @h.to_i
+      if @kk_zikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
+        @kk_m = @sk_m.to_i + @m.to_i
+        if @kk_m > 60
+          @kk_h += 1
+          @kk_m -= 60
         end
+      end
+    elsif @kk_zikan =~ /\smins|\min/
+      @kk_m = $`.to_i + @sk_m.to_i
+      if @kk_m > 60
+        @kk_h += 1
+        @kk_m -= 60
+      else
+        @kk_h = @sk_h
       end
     end
 
-  
+
+    
   end
 
 end
+
