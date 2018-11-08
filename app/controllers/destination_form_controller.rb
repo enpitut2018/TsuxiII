@@ -12,39 +12,40 @@ class DestinationFormController < ApplicationController
     destination_2 = params[:destination_2]
     @hour = params[:hour]
     @minute = params[:minute]
-    @sk_json_array = [] #出発地から経由地のjson(s:start, k:keiyu)
-    @kk_json_array = [] #経由地間のjson
-    @sk_zikan_array =[] #出発地から経由地の時間
+    @keiyu_array = [destination_1, destination_2] # 経由地
+    @sk_res = []                                  # 出発地から経由地のjson(s:start, k:keiyu)
+    kk_res = []                                   # 経由地間のjson
+    sk_time =[]                                   # 出発地から経由地の時間
 
     # スタートから経由地の時間を取得する
     [destination_1, destination_2].each do |d|
       uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@origin+'&destinations='+d+'&mode=driving&key='+ENV['API_KEY'])
       json = Net::HTTP.get(URI.parse(uri))
-      @sk_json_array.push(JSON.parse(json))
+      @sk_res.push(JSON.parse(json))
     end
 
     # 経由地間の時間を取得する
     uri2 = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+destination_1+'&destinations='+destination_2+'&mode=driving&key='+ENV['API_KEY'])
     json = Net::HTTP.get(URI.parse(uri2))
-    @kk_json_array = JSON.parse(json)
+    kk_res = JSON.parse(json)
 
-    @sk_json_array.each do |d|
+    @sk_res.each do |d|
       zikan = d['rows'][0]['elements'][0]['duration']['text']
       if zikan =~ /\shours|\shour/
           hour = $`
           if zikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
               zikan_new = (hour.to_s + '.' + $+.to_s).to_f
-              @sk_zikan_array.push(zikan_new)
+              sk_time.push(zikan_new)
           end
       elsif zikan =~ /\smins|\smin/
           zikan_new = ("0." + $`.to_s).to_f
-          @sk_zikan_array.push(zikan_new)
+          sk_time.push(zikan_new)
       end
   
     end
    
   
-    if @sk_zikan_array[0] < @sk_zikan_array[1]
+    if sk_time[0] < sk_time[1]
       big = 1
       small = 0
     else
@@ -57,12 +58,12 @@ class DestinationFormController < ApplicationController
 
 
     # スタートから近い経由地までの時間
-    @sk_zikan = @sk_json_array[small]['rows'][0]['elements'][0]['duration']['text']
+    @sk_zikan = @sk_res[small]['rows'][0]['elements'][0]['duration']['text']
     # 近い経由地から経由地までの時間
-    @kk_zikan = @kk_json_array['rows'][0]['elements'][0]['duration']['text']
+    @kk_zikan = kk_res['rows'][0]['elements'][0]['duration']['text']
 
 
-    ###### s(スタート)からk(経由地1)までの時間演算
+    # s(スタート)からk(経由地1)までの時間演算
     if @sk_zikan =~ /\shours|\shour/
       @sk_h = $`.to_i + @hour.to_i
       if @sk_zikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
@@ -82,7 +83,7 @@ class DestinationFormController < ApplicationController
       end
     end
 
-    ###### k(経由地1)からk(経由地2)までの時間演算
+    # k(経由地1)からk(経由地2)までの時間演算
     if @kk_zikan =~ /\shours|\shour/
       @kk_h = @sk_h.to_i + @hour.to_i
       if @kk_zikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
@@ -100,11 +101,7 @@ class DestinationFormController < ApplicationController
       else
         @kk_h = @sk_h
       end
-    end
-
-
-    
+    end 
   end
-
 end
 
