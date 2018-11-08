@@ -30,16 +30,16 @@ class DestinationFormController < ApplicationController
     kk_res = JSON.parse(json)
 
     @sk_res.each do |d|
-      zikan = d['rows'][0]['elements'][0]['duration']['text']
-      if zikan =~ /\shours|\shour/
+      time = d['rows'][0]['elements'][0]['duration']['text']
+      if time =~ /\shours|\shour/
           hour = $`
-          if zikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-              zikan_new = (hour.to_s + '.' + $+.to_s).to_f
-              sk_time.push(zikan_new)
+          if time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
+              time_new = (hour.to_s + '.' + $+.to_s).to_f
+              sk_time.push(time_new)
           end
-      elsif zikan =~ /\smins|\smin/
-          zikan_new = ("0." + $`.to_s).to_f
-          sk_time.push(zikan_new)
+      elsif time =~ /\smins|\smin/
+          time_new = ("0." + $`.to_s).to_f
+          sk_time.push(time_new)
       end
   
     end
@@ -58,48 +58,48 @@ class DestinationFormController < ApplicationController
 
 
     # スタートから近い経由地までの時間
-    @sk_zikan = @sk_res[small]['rows'][0]['elements'][0]['duration']['text']
+    @sk_time = @sk_res[small]['rows'][0]['elements'][0]['duration']['text']
     # 近い経由地から経由地までの時間
-    @kk_zikan = kk_res['rows'][0]['elements'][0]['duration']['text']
+    @kk_time = kk_res['rows'][0]['elements'][0]['duration']['text']
 
 
     # s(スタート)からk(経由地1)までの時間演算
-    if @sk_zikan =~ /\shours|\shour/
-      @sk_h = $`.to_i + @hour.to_i
-      if @sk_zikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-        @sk_m = $+.to_i + @minute.to_i
-        if @sk_m > 60
-          @sk_h += 1
-          @sk_m -= 60
+    if @sk_time =~ /\shours|\shour/
+      @sk_hour = $`.to_i + @hour.to_i
+      if @sk_time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
+        @sk_minute = $+.to_i + @minute.to_i
+        if @sk_minute > 60
+          @sk_hour += 1
+          @sk_minute -= 60
         end
       end
-    elsif @sk_zikan =~ /\smins|\smin/
-      @sk_m = $`.to_i + @minute.to_i
-      if @sk_m > 60
-        @sk_h += 1
-        @sk_m -= 60
+    elsif @sk_time =~ /\smins|\smin/
+      @sk_minute = $`.to_i + @minute.to_i
+      if @sk_minute > 60
+        @sk_hour += 1
+        @sk_minute -= 60
       else
-        @sk_h = @hour
+        @sk_hour = @hour
       end
     end
 
     # k(経由地1)からk(経由地2)までの時間演算
-    if @kk_zikan =~ /\shours|\shour/
-      @kk_h = @sk_h.to_i + @hour.to_i
-      if @kk_zikan =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-        @kk_m = @sk_m.to_i + @minute.to_i
+    if @kk_time =~ /\shours|\shour/
+      @kk_h = @sk_hour.to_i + @hour.to_i
+      if @kk_time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
+        @kk_m = @sk_minute.to_i + @minute.to_i
         if @kk_m > 60
           @kk_h += 1
           @kk_m -= 60
         end
       end
-    elsif @kk_zikan =~ /\smins|\smin/
-      @kk_m = $`.to_i + @sk_m.to_i
+    elsif @kk_time =~ /\smins|\smin/
+      @kk_m = $`.to_i + @sk_minute.to_i
       if @kk_m > 60
         @kk_h += 1
         @kk_m -= 60
       else
-        @kk_h = @sk_h
+        @kk_h = @sk_hour
       end
     end 
   end
