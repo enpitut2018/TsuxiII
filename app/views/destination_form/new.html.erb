@@ -2,12 +2,16 @@
 <div class="container">
   <%= form_tag("/create", method: "post") do %>
     <h1>出発地を入力してください</h1>
-    <%= text_field_tag(:q_ori) %>
+      <%= text_field_tag(:q_ori) %>
+    </br>
+    <h1>出発時刻を入力してください</h1>
+      <%= text_field_tag(:h) %>時
+      <%= text_field_tag(:m) %>分
     </br>
     <h1>目的地を入力してください</h1>
-    <%= text_field_tag(:q1) %>
+      <%= text_field_tag(:q1) %>
     </br>
-    <%= text_field_tag(:q2) %>
+      <%= text_field_tag(:q2) %>
     </br>
     <%= submit_tag("検索する") %>
   <% end %>
