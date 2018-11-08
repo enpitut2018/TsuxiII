@@ -7,12 +7,11 @@ class DestinationFormController < ApplicationController
   end
 
   def create
-    
-    @q_ori = params[:q_ori]
+    @origin = params[:origin]
     @q1 = params[:q1]
     @q2 = params[:q2]
-    @h = params[:h]
-    @m = params[:m]
+    @h = params[:hour]
+    @m = params[:minute]
     @keiyu_array = [@q1, @q2] #経由地
     @sk_json_array = [] #出発地から経由地のjson(s:start, k:keiyu)
     @kk_json_array = [] #経由地間のjson
@@ -20,7 +19,7 @@ class DestinationFormController < ApplicationController
 
     # スタートから経由地の時間を取得する
     @keiyu_array.each do |d|
-      uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@q_ori+'&destinations='+d+'&mode=driving&key='+ENV['API_KEY'])
+      uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@origin+'&destinations='+d+'&mode=driving&key='+ENV['API_KEY'])
       json = Net::HTTP.get(URI.parse(uri))
       @sk_json_array.push(JSON.parse(json))
     end
