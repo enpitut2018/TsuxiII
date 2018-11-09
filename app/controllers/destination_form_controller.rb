@@ -62,44 +62,68 @@ class DestinationFormController < ApplicationController
 
 
     # s(スタート)からk(経由地1)までの時間演算
+
+    # start→viaの時間の初期設定(by t:1109)
+    @sk_hour = @hour.to_i
+    @sk_minute = @minute.to_i
+
     if @sk_time =~ /\shours|\shour/
-      @sk_hour = $`.to_i + @hour.to_i
+      @sk_hour = $`.to_i + @sk_hour
       if @sk_time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-        @sk_minute = $+.to_i + @minute.to_i
-        if @sk_minute > 60
-          @sk_hour += 1
-          @sk_minute -= 60
-        end
+        @sk_minute = $+.to_i + @sk_minute
       end
     elsif @sk_time =~ /\smins|\smin/
-      @sk_minute = $`.to_i + @minute.to_i
-      if @sk_minute > 60
-        @sk_hour += 1
-        @sk_minute -= 60
-      else
-        @sk_hour = @hour
-      end
+      @sk_minute = $`.to_i + @sk_minute
     end
 
+    # 分が60を越える時の設定(by t:1109)
+    if @sk_minute >= 60
+      @sk_hour += 1
+      @sk_minute -= 60
+    end
+
+    # 時間が24時を回る時の設定(by t:1109)
+    if @sk_hour >= 24
+      @sk_hour -= 24
+    end
+
+    # 0-9分以内の場合の分表示の設定(by t:1109)
+    if @sk_minute < 10
+      @sk_minute = "0" + @sk_minute.to_s
+    end
+
+
     # k(経由地1)からk(経由地2)までの時間演算
+    
+    # via→goalの時間の初期設定(by t:1109)
+    @kk_h = @sk_hour.to_i
+    @kk_m = @sk_minute.to_i
+
     if @kk_time =~ /\shours|\shour/
-      @kk_h = @sk_hour.to_i + @hour.to_i
+      @kk_h = @kk_h + $`.to_i
       if @kk_time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-        @kk_m = @sk_minute.to_i + @minute.to_i
-        if @kk_m > 60
-          @kk_h += 1
-          @kk_m -= 60
-        end
+        @kk_m = @kk_m + $+.to_i
       end
     elsif @kk_time =~ /\smins|\smin/
-      @kk_m = $`.to_i + @sk_minute.to_i
-      if @kk_m > 60
-        @kk_h += 1
-        @kk_m -= 60
-      else
-        @kk_h = @sk_hour
-      end
+      @kk_m = $`.to_i + @kk_m
     end 
+
+    # 分が60を越える時の設定(by t:1109)
+    if @kk_m >= 60
+      @kk_h += 1
+      @kk_m -= 60
+    end
+
+    # 時間が24時を回る時の設定(by t:1109)
+    if @kk_h >= 24
+      @kk_h -= 24
+    end
+
+     # 0-9分以内の場合の分表示の設定(by t:1109)
+    if @kk_m < 10
+      @kk_m = "0" + @kk_m.to_s
+    end
+    
   end
 end
-
+    
