@@ -1,12 +1,5 @@
-<h4>出発地：<%= @origin %></h4>
-
-<% loop_counter = 1 %>
-<% @keiyu_array.each do |a| %>
-    <h4>経由地(<%= loop_counter.to_s %>)：<%= a %></h4>
-    <% loop_counter = loop_counter +1 %>
-<% end %>
-
-<h1>検索結果</h1>
+<div class="container">
+  <h3>検索結果</h3>
 
 
 <%= @hour %>:<%= @minute %>  <%= @origin %> 
@@ -19,8 +12,9 @@
 </br>
 <%= @kk_h %>:<%= @kk_m %>  <%= @near2 %> 
 <br>
-
+</div>
 <div id='map'></div>
+
 
 <script>map.js</script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDRj-HjvK8Jz8IHzMeWkcnhcG1FMpi6aNM&callback=initMap"></script>
