@@ -40,7 +40,7 @@
         var d = new google.maps.DirectionsService(); // ルート検索オブジェクト
         var r = new google.maps.DirectionsRenderer({ // ルート描画オブジェクト
           map: map, // 描画先の地図
-          preserveViewport: true, // 描画後に中心点をずらさない
+          preserveViewport: false, // 描画後に中心点をずらす
         });
         // ルート検索
         d.route(request, function(result, status){

@@ -15,7 +15,7 @@ class DestinationFormController < ApplicationController
     @keiyu_array = [destination_1, destination_2] # 経由地
     @sk_res = []                                  # 出発地から経由地のjson(s:start, k:keiyu)
     kk_res = []                                   # 経由地間のjson
-    sk_time =[]                                   # 出発地から経由地の時間
+    sk_keisan =[]                                 # 出発地から経由地の途中計算
 
     # スタートから経由地の時間を取得する
     [destination_1, destination_2].each do |d|
@@ -35,30 +35,28 @@ class DestinationFormController < ApplicationController
           hour = $`
           if time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
               time_new = (hour.to_s + '.' + $+.to_s).to_f
-              sk_time.push(time_new)
+              sk_keisan.push(time_new)
           end
       elsif time =~ /\smins|\smin/
           time_new = ("0." + $`.to_s).to_f
-          sk_time.push(time_new)
+          sk_keisan.push(time_new)
       end
   
     end
-   
-  
-    if sk_time[0] < sk_time[1]
-      big = 1
-      small = 0
-    else
-      big = 0
-      small = 1
-    end
+    
+    # {経由地 => 出発地から経由地の途中計算} #値でsort
+    hash = Hash[@keiyu_array.zip sk_keisan]
+    sk_hash = Hash[hash.sort_by{ |_, v| v }]
 
-    @near1 = @keiyu_array[small]
-    @near2 = @keiyu_array[big]
+    @near1 = sk_hash.keys[0]
+    @near2 = sk_hash.keys[1]
 
+    # {出発地から経由地のjson => 出発地から経由地の途中計算} #値でsort
+    hash2 = Hash[@sk_res.zip sk_keisan]
+    sk_hash_res = Hash[hash2.sort_by{ |_, v| v }]
 
     # スタートから近い経由地までの時間
-    @sk_time = @sk_res[small]['rows'][0]['elements'][0]['duration']['text']
+    @sk_time = sk_hash_res.keys[0]['rows'][0]['elements'][0]['duration']['text']
     # 近い経由地から経由地までの時間
     @kk_time = kk_res['rows'][0]['elements'][0]['duration']['text']
 
