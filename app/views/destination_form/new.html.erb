@@ -1,17 +1,17 @@
 
-<div class="container">
-  <%= form_tag("/create", method: "post") do %>
-    <h1>出発地を入力してください</h1>
-      <%= text_field_tag(:origin) %>
+<div class="container mt-5">
+  <%= form_tag("/create", method: "post", class: "box-center") do %>
+    <h3 class="text-center">出発地を入力してください</h3>
+      <%= text_field_tag(:origin, '', :class=>'mb-3 mt-1') %>
     </br>
-    <h1>出発時刻を入力してください</h1>
+    <h3 class="text-center">出発時刻を入力してください</h3>
       <%= text_field_tag(:hour) %>時
       <%= text_field_tag(:minute) %>分
     </br>
-    <h1>目的地を入力してください</h1>
-      <%= text_field_tag(:destination_1) %>
+    <h3 class="text-center">目的地を入力してください</h3>
+      <%= text_field_tag(:destination_1, '', :class=>'mb-3') %>
     </br>
-      <%= text_field_tag(:destination_2) %>
+      <%= text_field_tag(:destination_2, '', :class=>'mb-3') %>
     </br>
     <%= submit_tag("検索する") %>
   <% end %>
