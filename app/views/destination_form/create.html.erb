@@ -1,12 +1,5 @@
-<h4>出発地：<%= @origin %></h4>
-
-<% loop_counter = 1 %>
-<% @keiyu_array.each do |a| %>
-    <h4>経由地(<%= loop_counter.to_s %>)：<%= a %></h4>
-    <% loop_counter = loop_counter +1 %>
-<% end %>
-
-<h1>検索結果</h1>
+<div class="container">
+  <h3>検索結果</h3>
 
 
 <%= @hour %>:<%= @minute %>  <%= @origin %> 
@@ -19,7 +12,7 @@
 </br>
 <%= @kk_h %>:<%= @kk_m %>  <%= @near2 %> 
 <br>
-
+</div>
 <div id='map'></div>
 
     <script>
@@ -40,7 +33,7 @@
         var d = new google.maps.DirectionsService(); // ルート検索オブジェクト
         var r = new google.maps.DirectionsRenderer({ // ルート描画オブジェクト
           map: map, // 描画先の地図
-          preserveViewport: false, // 描画後に中心点をずらす
+          preserveViewport: false, // 描画後に中心点をずらさない
         });
         // ルート検索
         d.route(request, function(result, status){
