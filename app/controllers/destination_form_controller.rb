@@ -12,7 +12,7 @@ class DestinationFormController < ApplicationController
     destination_2 = params[:destination_2]
     @hour = params[:hour]
     @minute = params[:minute]
-    
+
     @c_hour = params[:c_hour]
     @c_minute = params[:c_minute]
 
@@ -128,7 +128,7 @@ class DestinationFormController < ApplicationController
 
     # 差分の目安の時間、分の変数を用意(不変)
     @dif_hour = @hour.to_i - @c_hour.to_i
-    @dif_minute = @minute.to_i -@c_minute.to_i
+    @dif_minute = @minute.to_i - @c_minute.to_i
 
 
     # 中継時間を設定した場所が近い場所なら
