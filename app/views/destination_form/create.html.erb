@@ -6,12 +6,38 @@
 </br>
 ↓
 </br>
-<%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  
-</br>
-↓
-</br>
-<%= @kk_h %>:<%= @kk_m %>  <%= @near2 %> 
+<% if @destination_1 == @near1 %>
+  <% if @orderz <= @reversez %>
+    <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+    </br>
+    ↓
+    </br>
+    <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %> 
+  <% else %>
+    <%= @gokei_sd2_h  %>:<%= @gokei_sd2_m %>  <%= @near2 %>
+    </br>
+    ↓
+    </br>
+    <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near1 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
+  <% end %>
+<% elsif @destination_1 == @near2 %>
+  <% if @orderz <= @reversez %>
+    <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  
+    </br>
+    ↓
+    </br>
+    <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+  <% else %>
+    <%= @gokei_sd1_h %>:<%= @gokei_sd1_m %>  <%= @near2 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+    </br>
+    ↓
+    </br>
+    <%= @gokei_sd1d2_h %>:<%= @gokei_sd1d2_m %>  <%= @near1 %>  
+  <% end %>
+<% end %>  
+
 <br>
+
 </div>
 <div id='map'></div>
 
