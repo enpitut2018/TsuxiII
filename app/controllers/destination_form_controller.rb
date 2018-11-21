@@ -22,6 +22,14 @@ class DestinationFormController < ApplicationController
     kk_res = []                                   # 経由地間のjson
     sk_keisan =[]                                 # 出発地から経由地の途中計算
 
+    
+    if @hour == "-1" && @minute == "-1"
+      d = DateTime.now
+      @hour = d.hour
+      @minute = d.minute
+    end
+
+
     # スタートからそれぞれの経由地の時間を取得する
     [@destination_1, @destination_2].each do |d|
       uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@origin+'&destinations='+d+'&mode=driving&key='+ENV['API_KEY'])
@@ -222,8 +230,8 @@ class DestinationFormController < ApplicationController
    if @gokei_sd2_h >= 24
     @gokei_sd2_h　= @gokei_sd2_h.to_i - 24
    end
-   @gokei_sd2d1_h = @sd2d1hour + @hour.to_i
-   @gokei_sd2d1_m = @sd2d1minute + @minute.to_i
+   @gokei_sd2d1_h = @sd2d1hour.to_i + @hour.to_i
+   @gokei_sd2d1_m = @sd2d1minute.to_i + @minute.to_i
    if @gokei_sd2d1_m >= 60
     @gokei_sd2d1_h += 1
     @gokei_sd2d1_m -= 60
