@@ -34,29 +34,28 @@
 
     <h1 class="text-center">目的地を入力してください</h1>
     <%= text_field_tag(:destination_1, '', :class=>'mb-3') %>
-    <h4>経由時刻を入力してください</h4>
-        <select class="ui search dropdown" name =<%=(:c_hour)%>>
-          <% for h in 0..23 %>
-            <option value="<%=h%>"><%=h%></option> 
-          <% end %>
-        </select>時
-
-        <select class="ui search dropdown" name =<%=(:c_minute)%>>
-          <% 0.step(50, 10) do |m| %>
-            <option value="<%=m%>"><%=m%></option> 
-          <% end %>
-        </select>分
 
     <!--1つ目の目的地入力フォーム-->
 
       <!--「詳細設定」をクリックすると時間が指定できる-->
       <div class="hidden_box">
-        <label for="labe2">詳細設定</label>
+        <label for="label2">詳細設定</label>
         <input type="checkbox" id="label2"/>
         <div class="hidden_show">
           <!--非表示ここから-->  
+            <h4>経由時刻を入力してください</h4>
+              <select class="ui search dropdown" name =<%=(:c_hour)%>>
+                <% for h in 0..23 %>
+                  <option value="<%=h%>"><%=h%>時</option> 
+                <% end %>
+              </select>
 
-            <!--ここまで-->
+              <select class="ui search dropdown" name =<%=(:c_minute)%>>
+                <% 0.step(50, 10) do |m| %>
+                  <option value="<%=m%>"><%=m%>分</option> 
+                <% end %>
+              </select> 
+          <!--ここまで-->
         </div>
       </div>
 
