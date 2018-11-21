@@ -6,3 +6,6 @@
 Webアプリです。
 GoogleMap とは違って
 時間指定機能が備わっています
+
+
+リンクURL:https://tsuxiii.herokuapp.com
