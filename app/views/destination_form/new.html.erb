@@ -37,13 +37,13 @@
     <h4>経由時刻を入力してください</h4>
         <select class="ui search dropdown" name =<%=(:c_hour)%>>
           <% for h in 0..23 %>
-            <option value="<%=h%>"><%=h%></option> 
+            <option value="<%=h%>"><%=h%>時</option> 
           <% end %>
         </select>
 
         <select class="ui search dropdown" name =<%=(:c_minute)%>>
           <% 0.step(50, 10) do |m| %>
-            <option value="<%=m%>"><%=m%></option> 
+            <option value="<%=m%>"><%=m%>分</option> 
           <% end %>
         </select>
 

@@ -23,7 +23,7 @@ class DestinationFormController < ApplicationController
     sk_keisan =[]                                 # 出発地から経由地の途中計算
 
     
-    if @hour == "-1" && @minute == "-1"
+    if @hour == "-1" || @minute == "-1"
       d = DateTime.now
       @hour = d.hour
       @minute = d.minute
