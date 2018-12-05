@@ -19,11 +19,11 @@
 
 /*全体*/
 .hidden_box {
-  margin: 2em 0;/*前後の余白*/
+  margin: 0.5em 0;/*前後の余白*/
   padding: 0;
 }
 
-/*ボタン装飾*/
+/*ボタン装飾
 .hidden_box label {
   display: inline-block;
   text-decoration: none;
@@ -39,7 +39,15 @@
   overflow: hidden;
   transition: .4s;
 }
+*/
 
+/*ボタン装飾*/
+.hidden_box label {
+  padding: 8px;
+  font-weight: bold;
+  border: solid 2px black;
+  cursor :pointer;
+}
 
 /*ボタンホバー時*/
 .hidden_box label:hover {
