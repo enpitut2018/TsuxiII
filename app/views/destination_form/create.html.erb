@@ -6,8 +6,33 @@
 </br>
 ↓
 </br>
+
+# 時間以内に行けるかどうかの判断(時間オーバーの場合の変数の更新))
+# もともとdestination_formで作成しておく必要がある
 <% if @destination_1 == @near1 %>
+  <% if @sk_hour > @c_hour %>
+
+  <% end %>
+
+  <% if @gokei_sd2d1_h > @c_hour %>
+
+  <% end %>
+<% elsif @destination_1 == @near2 %>
+  <% if @skk_h > @c_hour %>
+
+  <% end %>
+
+  <% if @gokei_sd1_h > @c_hour %>
+
+  <% end %>
+<% end %>
+
+
+<% if @destination_1 == @near1 %>
+
+
   <% if @orderz <= @reversez %>
+
     <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
     </br>
     ↓
@@ -41,6 +66,7 @@
     <%= @gokei_sd1d2_h %>:<%= @gokei_sd1d2_m %>  <%= @near2 %>  
   <% end %>
 <% end %>  
+
 
 <br>
 
