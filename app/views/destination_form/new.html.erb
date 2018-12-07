@@ -1,8 +1,8 @@
 
 <div class="container mt-5">
   <%= form_tag("/create", method: "post", class: "box-center") do %>
-    <h1 class="text-center">出発地を入力してください</h1>
-      <%= text_field_tag(:origin, '', :class=>'mb-3 mt-1') %>
+    <!-- <h1 class="text-center">出発地を入力してください</h1> -->
+      <%= text_field_tag(:origin, '', :class=>'mb-3 mt-1', :placeholder=>'出発地を入力') %>
     </br>
 
     <div class="hidden_box">
@@ -32,8 +32,8 @@
 
     </br>
 
-    <h1 class="text-center">目的地を入力してください</h1>
-    <%= text_field_tag(:destination_1, '', :class=>'mb-3') %>
+    <!-- <h1 class="text-center">目的地を入力してください</h1> -->
+    <%= text_field_tag(:destination_1, '', :class=>'mb-3', :placeholder=>'目的地を入力') %>
 
     <!--1つ目の目的地入力フォーム-->
 
@@ -62,7 +62,7 @@
     </br>
     　
     <!--2つ目の目的地入力フォーム-->
-      <%= text_field_tag(:destination_2, '', :class=>'mb-3') %>
+      <%= text_field_tag(:destination_2, '', :class=>'mb-3', :placeholder=>'目的地を入力') %>
 
       <!--「詳細設定」をクリックすると時間が指定できる-->
       <div class="hidden_box">
