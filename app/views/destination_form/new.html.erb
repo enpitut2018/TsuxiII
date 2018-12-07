@@ -6,7 +6,7 @@
     </br>
 
     <div class="hidden_box">
-      <label for="label1">時間指定</label>
+      <label for="label1" class="btn btn-outline-dark">時間指定</label>
       <input type="checkbox" id="label1"/>
       <div class="hidden_show">
         <!--非表示ここから-->     
@@ -39,7 +39,7 @@
 
       <!--「詳細設定」をクリックすると時間が指定できる-->
       <div class="hidden_box">
-        <label for="label2">詳細設定</label>
+        <label for="label2" class="btn btn-outline-dark">詳細設定</label>
         <input type="checkbox" id="label2"/>
         <div class="hidden_show">
           <!--非表示ここから-->  
@@ -65,17 +65,17 @@
       <%= text_field_tag(:destination_2, '', :class=>'mb-3', :placeholder=>'目的地を入力') %>
 
       <!--「詳細設定」をクリックすると時間が指定できる-->
-      <div class="hidden_box">
-        <label for="labe2">詳細設定</label>
+      <!-- <div class="hidden_box">
+        <label for="labe2" class="btn btn-outline-dark">詳細設定</label>
         <input type="checkbox" id="label2"/>
-        <div class="hidden_show">
+        <div class="hidden_show"> -->
           <!--非表示ここから-->  
-        </div>
-      </div>
+        <!-- </div>
+      </div> -->
 
 
     </br>
-    <%= submit_tag("検索する") %>
+    <%= submit_tag("検索する", :class=>"btn btn-secondary btn-lg")%>
   <% end %>
 </div>
 
