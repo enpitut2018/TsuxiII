@@ -20,7 +20,7 @@
 
   <% if @gokei_sd2d1_h > @c_hour %>
     <% @over2 = 1 %>
-  <% elsif @gokei_sd2_h == @c_hour && @gokei_sd2_m > @c_minute %>
+  <% elsif @gokei_sd2d1_h == @c_hour && @gokei_sd2_m > @c_minute %>
     <% @over2 = 1 %>  
   <% end %>
 <% elsif @destination_1 == @near2 %>
@@ -137,7 +137,14 @@
 <%= @over1 %>
 変数2:
 <%= @over2 %>
-
+時間:
+<%= @gokei_sd2d1_h%>
+分:
+<%= @gokei_sd2d1_m%>
+オーダー時間:
+<%= @order_time %>
+リバース時間:
+<%= @reverse_time %>
 
 <br>
 </div>

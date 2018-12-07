@@ -172,6 +172,10 @@ class DestinationFormController < ApplicationController
           @sd2d1minute = @sd2minute + $+.to_i
         end
       elsif @kk_time =~ /\smins|\smin/
+
+        # 追加(1207)
+        @sd2d1hour = @sd2hour
+
         @sd2d1minute = $`.to_i + @sd2minute
       end
       if @sd2d1minute >= 60
@@ -204,6 +208,10 @@ class DestinationFormController < ApplicationController
           @sd1d2minute = @sd1minute + $+.to_i
         end
       elsif @kk_time =~ /\smins|\smin/
+
+        # 追加(1207)
+        @sd1d2hour = @sd1hour
+        
         @sd1d2minute = $`.to_i + @sd1minute
       end
       if @sd1d2minute.to_i >= 60
@@ -234,7 +242,7 @@ class DestinationFormController < ApplicationController
    end
    @gokei_sd2d1_h = @sd2d1hour.to_i + @hour.to_i
    @gokei_sd2d1_m = @sd2d1minute.to_i + @minute.to_i
-   if @gokei_sd2d1_m >= 60
+   if @gokei_sd2d1_m.to_i >= 60
     @gokei_sd2d1_h += 1
     @gokei_sd2d1_m -= 60
    end
