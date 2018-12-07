@@ -14,7 +14,9 @@ class DestinationFormController < ApplicationController
     @minute = params[:minute]
     
     @c_hour = params[:c_hour]
+    @c_hour = @c_hour.to_i
     @c_minute = params[:c_minute]
+    @c_minute = @c_minute.to_i
 
 
     @keiyu_array = [@destination_1, @destination_2] # 経由地
@@ -204,7 +206,7 @@ class DestinationFormController < ApplicationController
       elsif @kk_time =~ /\smins|\smin/
         @sd1d2minute = $`.to_i + @sd1minute
       end
-      if @sd1d2minute >= 60
+      if @sd1d2minute.to_i >= 60
         @sd1d2hour = @sd1d2hour.to_i + 1
         @sd1d2minute -= 60
       end
@@ -258,6 +260,14 @@ class DestinationFormController < ApplicationController
    if @gokei_sd1d2_h >= 24
     @gokei_sd1d2_h　= @gokei_sd1d2_h - 24
    end
+
+
+  #  時間のオーバー判定のための変数の作成と初期化
+  @over1 = 0
+  @over2 = 0
+  @over3 = 0
+  @over4 = 0
+
 
 
   end
