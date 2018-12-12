@@ -17,6 +17,8 @@ class DestinationFormController < ApplicationController
     @c_hour = @c_hour.to_i
     @c_minute = params[:c_minute]
     @c_minute = @c_minute.to_i
+    # 確認用の変数
+    @kak = 0
 
 
     @keiyu_array = [@destination_1, @destination_2] # 経由地
@@ -172,8 +174,11 @@ class DestinationFormController < ApplicationController
           @sd2d1minute = @sd2minute + $+.to_i
         end
       elsif @kk_time =~ /\smins|\smin/
+       # 追加と修正(1207)
+        @sd2d1hour = @sd2hour
         @sd2d1minute = $`.to_i + @sd2minute
       end
+
       if @sd2d1minute >= 60
         @sd2d1hour = @sd2d1hour.to_i + 1
         @sd2d1minute = @sd2d1minute - 60
@@ -204,6 +209,8 @@ class DestinationFormController < ApplicationController
           @sd1d2minute = @sd1minute + $+.to_i
         end
       elsif @kk_time =~ /\smins|\smin/
+        # 追加と修正(1207)
+        @sd1d2hour = @sd1hour
         @sd1d2minute = $`.to_i + @sd1minute
       end
       if @sd1d2minute.to_i >= 60
@@ -215,7 +222,7 @@ class DestinationFormController < ApplicationController
       end
       @order_time = (@sd2d1hour.to_s + "." + @sd2d1minute.to_s).to_f
       @reverse_time = (@sd1d2hour.to_s + "." + @sd1d2minute.to_s).to_f
-  
+
     end
   
    # -------- create.html.erbで使うための変数 -------------
@@ -223,40 +230,53 @@ class DestinationFormController < ApplicationController
    @reversez = (@reverse_time - @dif_time).abs
   
    # 差分を時刻にする
+
+  #  (1/4)viewでの変数を、時刻ありきの時間に切り替える
    @gokei_sd2_h = @sd2hour + @hour.to_i
    @gokei_sd2_m = @sd2minute + @minute.to_i
    if @gokei_sd2_m >= 60
     @gokei_sd2_h += 1
     @gokei_sd2_m -= 60
    end
+
    if @gokei_sd2_h >= 24
-    @gokei_sd2_h　= @gokei_sd2_h.to_i - 24
+    @gokei_sd2_h -= 24
    end
+  
+  #  (2/4)viewでの変数を、時刻ありきの時間に切り替える
    @gokei_sd2d1_h = @sd2d1hour.to_i + @hour.to_i
    @gokei_sd2d1_m = @sd2d1minute.to_i + @minute.to_i
-   if @gokei_sd2d1_m >= 60
+
+   if @gokei_sd2d1_m.to_i >= 60
     @gokei_sd2d1_h += 1
     @gokei_sd2d1_m -= 60
    end
+
    if @gokei_sd2d1_h >= 24
-    @gokei_sd2d1_h = @gokei_sd2d1_h.to_i - 24
+    @gokei_sd2d1_h = @gokei_sd2d1_h - 24
    end
-   
+
+   #  (3/4)viewでの変数を、時刻ありきの時間に切り替える
    @gokei_sd1_h = @sd1hour + @hour.to_i
    @gokei_sd1_m = @sd1minute + @minute.to_i
    if @gokei_sd1_m >= 60
     @gokei_sd1_h += 1
     @gokei_sd1_m -= 60
    end
+
    if @gokei_sd1_h >= 24
     @gokei_sd1_h　= @gokei_sd1_h.to_i - 24
    end
+
+  #  (4/4)viewでの変数を、時刻ありきの時間に切り替える
    @gokei_sd1d2_h = @sd1d2hour + @hour.to_i
    @gokei_sd1d2_m = @sd1d2minute.to_i + @minute.to_i
+
    if @gokei_sd1d2_m >= 60
     @gokei_sd1d2_h += 1
     @gokei_sd1d2_m -= 60
    end
+
    if @gokei_sd1d2_h >= 24
     @gokei_sd1d2_h　= @gokei_sd1d2_h - 24
    end
@@ -268,7 +288,7 @@ class DestinationFormController < ApplicationController
   @over3 = 0
   @over4 = 0
 
-
+  @gokei_sd2_h
 
   end
 end

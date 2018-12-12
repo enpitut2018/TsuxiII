@@ -2,39 +2,38 @@
   <h3>検索結果</h3>
 
 
-  <%= @hour %>:<%= @minute %>  <%= @origin %> 
-  </br>
-  ↓
-  </br>
+<%= @hour %>:<%= @minute %>  <%= @origin %> 
+</br>
+↓
+</br>
 
-  <!-- 時間以内に行けるかどうかの判断(時間オーバーの場合の変数の更新))
-  もともとdestination_formで作成しておく必要がある
-  -->
+<!-- 時間以内に行けるかどうかの判断(時間オーバーの場合の変数の更新))
+もともとdestination_formで作成しておく必要がある
+-->
 
-  <% if @destination_1 == @near1 %>
-    <% if @sk_hour > @c_hour %>
-      <% @over1 = 1 %>
-    <% elsif @sk_hour == @c_hour && @sk_minute > @c_minute %>
-      <% @over1 = 1 %>
-    <% end %>
+<% if @destination_1 == @near1 %>
+  <% if @sk_hour > @c_hour %>
+    <% @over1 = 1 %>
+  <% elsif @sk_hour == @c_hour and @sk_minute > @c_minute %>
+    <% @over1 = 1 %>
+  <% end %>
+  <% if @gokei_sd2d1_h > @c_hour %>
+    <% @over2 = 1 %>
+  <% elsif @gokei_sd2d1_h == @c_hour and @gokei_sd2d1_m > @c_minute %>
+    <% @over2 = 1 %>  
+  <% end %>
+<% elsif @destination_1 == @near2 %>
+  <% if @skk_h > @c_hour %>
+    <% @over3 = 1 %>
+  <% elsif @skk_h == @c_hour and @skk_m > @c_minute %>  
+    <% @over3 = 1 %>
+  <% end %>
+ 
+  <% if @gokei_sd1_h > @c_hour %>
+    <% @over4 = 1 %>
+  <% elsif @gokei_sd1_h == @c_hour and @gokei_sd1_m > @c_minute %>  
+    <% @over4 = 1 %>
 
-    <% if @gokei_sd2d1_h > @c_hour %>
-      <% @over2 = 1 %>
-    <% elsif @gokei_sd2_h == @c_hour && @gokei_sd2_m > @c_minute %>
-      <% @over2 = 1 %>  
-    <% end %>
-  <% elsif @destination_1 == @near2 %>
-    <% if @skk_h > @c_hour %>
-      <% @over3 = 1 %>
-    <% elsif @skk_h == @c_hour && @skk_m > @c_minute %>  
-      <% @over3 = 1 %>
-    <% end %>
-   
-    <% if @gokei_sd1_h > @c_hour %>
-      <% @over4 = 1 %>
-    <% elsif @gokei_sd1_h == @c_hour && @gokei_sd1_m > @c_minute %>  
-      <% @over4 = 1 %>
-    <% end %>
   <% end %>
 
 
@@ -52,21 +51,21 @@
       
       <% elsif @orderz <= @reversez && @over1 == 1 %>
 
-        <% @near1,@near2 = @near2, @near1%>
-        <%= @gokei_sd2_h  %>:<%= @gokei_sd2_m %>  <%= @near1 %>
-        </br>
-        ↓
-        </br>
-        <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near2 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
+      <% @near1,@near2 = @near2, @near1%>
+      <%= @gokei_sd2_h %>:<%= @gokei_sd2_m %>  <%= @near1 %>
+      </br>
+      ↓
+      </br>
+      <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near2 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
 
       <% elsif @reversez <= @orderz && @over2 == 0 %>
 
-        <% @near1,@near2 = @near2, @near1%>
-        <%= @gokei_sd2_h  %>:<%= @gokei_sd2_m %>  <%= @near1 %>
-        </br>
-        ↓
-        </br>
-        <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near2 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
+      <% @near1,@near2 = @near2, @near1%>
+      <%= @gokei_sd2_h %>:<%= @gokei_sd2_m %>  <%= @near1 %>
+      </br>
+      ↓
+      </br>
+      <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near2 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
 
       <% elsif @reversez <= @orderz && @over2 == 1 %>
 
@@ -142,8 +141,28 @@
   分:
   <%= @gokei_sd2d1_m%> -->
 
+<!-- 確認用
+変数1:
+<%= @over1 %>
+変数2:
+<%= @over2 %>
+時間:
+<%= @gokei_sd2d1_h%>
+分:
+<%= @gokei_sd2d1_m%>
+オーダー時間:
+<%= @order_time %>
+リバース時間:
+<%= @reverse_time %>
+gokei時間:
+<%= @gokei_sd2_h %>
 
-  <br>
+あいう:
+<%=@gokei_sd2d1_h %>
+クラス
+<%=@gokei_sd2d1_h.class%>
+-->
+
 
   <% if @destination_1 == @near1 %>
     <% unless @over1 == 1 && @over2 == 1 %> 
