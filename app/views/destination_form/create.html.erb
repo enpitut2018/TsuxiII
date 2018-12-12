@@ -33,102 +33,113 @@
     <% @over4 = 1 %>
   <% elsif @gokei_sd1_h == @c_hour and @gokei_sd1_m > @c_minute %>  
     <% @over4 = 1 %>
-  <% end %>
-<% end %>
-
-
-<% if @destination_1 == @near1 %>
-
-  <% unless @over1 == 1 && @over2 == 1 %>
-    
-    <% if @orderz <= @reversez && @over1 == 0 %>
-
-      <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
-      </br>
-      ↓
-      </br>
-      <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %> 
-    
-    <% elsif @orderz <= @reversez && @over1 == 1 %>
-
-      <% @near1,@near2 = @near2, @near1%>
-      <%= @gokei_sd2_h %>:<%= @gokei_sd2_m %>  <%= @near1 %>
-      </br>
-      ↓
-      </br>
-      <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near2 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
-
-    <% elsif @reversez <= @orderz && @over2 == 0 %>
-
-      <% @near1,@near2 = @near2, @near1%>
-      <%= @gokei_sd2_h %>:<%= @gokei_sd2_m %>  <%= @near1 %>
-      </br>
-      ↓
-      </br>
-      <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near2 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
-
-    <% elsif @reversez <= @orderz && @over2 == 1 %>
-
-      <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
-      </br>
-      ↓
-      </br>
-      <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %> 
-
-    <% end %>
-  
-  <% else %>
-    <h2>条件にあうルートは見つかりません</h2>
 
   <% end %>
 
-<% elsif @destination_1 == @near2 %>
 
-  <% unless @over3 == 1 && @over4 == 1 %>
-    <% if @orderz <= @reversez && @over3 == 0 %>
-      <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  
-      </br>
-      ↓
-      </br>
-      <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+  <% if @destination_1 == @near1 %>
 
-    <% elsif @orderz <= @reversez && @over3 == 1 %>
-
-      <% @near1,@near2 = @near2, @near1%>
-
-      <%= @gokei_sd1_h %>:<%= @gokei_sd1_m %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
-      </br>
-      ↓
-      </br>
-      <%= @gokei_sd1d2_h %>:<%= @gokei_sd1d2_m %>  <%= @near2 %>  
+    <% unless @over1 == 1 && @over2 == 1 %>
       
-    <% elsif @reversez <= @orderz && @over4 == 0 %>
+      <% if @orderz <= @reversez && @over1 == 0 %>
+
+        <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+        </br>
+        ↓
+        </br>
+        <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %> 
+      
+      <% elsif @orderz <= @reversez && @over1 == 1 %>
 
       <% @near1,@near2 = @near2, @near1%>
+      <%= @gokei_sd2_h %>:<%= @gokei_sd2_m %>  <%= @near1 %>
+      </br>
+      ↓
+      </br>
+      <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near2 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
 
-      <%= @gokei_sd1_h %>:<%= @gokei_sd1_m %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+      <% elsif @reversez <= @orderz && @over2 == 0 %>
+
+      <% @near1,@near2 = @near2, @near1%>
+      <%= @gokei_sd2_h %>:<%= @gokei_sd2_m %>  <%= @near1 %>
       </br>
       ↓
       </br>
-      <%= @gokei_sd1d2_h %>:<%= @gokei_sd1d2_m %>  <%= @near2 %>  
+      <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near2 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
+
+      <% elsif @reversez <= @orderz && @over2 == 1 %>
+
+        <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+        </br>
+        ↓
+        </br>
+        <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %> 
+
+      <% end %>
     
-    <% elsif @reversez <= @orderz && @over4 == 1 %>
-      <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  
-      </br>
-      ↓
-      </br>
-      <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+    <% else %>
+      <h2>条件にあうルートは見つかりません</h2>
 
     <% end %>
 
-  <% else %>
+  <% elsif @destination_1 == @near2 %>
 
-    <h2>条件にあうルートは見つかりません</h2>
+    <% unless @over3 == 1 && @over4 == 1 %>
+      <% if @orderz <= @reversez && @over3 == 0 %>
+        <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  
+        </br>
+        ↓
+        </br>
+        <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
 
-  <% end %>
-  
-<% end %>  
+      <% elsif @orderz <= @reversez && @over3 == 1 %>
 
+        <% @near1,@near2 = @near2, @near1%>
+
+        <%= @gokei_sd1_h %>:<%= @gokei_sd1_m %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+        </br>
+        ↓
+        </br>
+        <%= @gokei_sd1d2_h %>:<%= @gokei_sd1d2_m %>  <%= @near2 %>  
+        
+      <% elsif @reversez <= @orderz && @over4 == 0 %>
+
+        <% @near1,@near2 = @near2, @near1%>
+
+        <%= @gokei_sd1_h %>:<%= @gokei_sd1_m %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+        </br>
+        ↓
+        </br>
+        <%= @gokei_sd1d2_h %>:<%= @gokei_sd1d2_m %>  <%= @near2 %>  
+      
+      <% elsif @reversez <= @orderz && @over4 == 1 %>
+        <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  
+        </br>
+        ↓
+        </br>
+        <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
+
+      <% end %>
+
+    <% else %>
+
+      <h2>条件にあうルートは見つかりません</h2>
+
+    <% end %>
+    
+  <% end %>  
+
+
+  <!-- 確認用
+  -->
+  <!-- 変数1:
+  <%= @over1 %>
+  変数2:
+  <%= @over2 %>
+  時間:
+  <%= @gokei_sd2d1_h%>
+  分:
+  <%= @gokei_sd2d1_m%> -->
 
 <!-- 確認用
 変数1:
@@ -152,18 +163,19 @@ gokei時間:
 <%=@gokei_sd2d1_h.class%>
 -->
 
-<br>
+
+  <% if @destination_1 == @near1 %>
+    <% unless @over1 == 1 && @over2 == 1 %> 
+      <div id='map' class="mt-4" style="width:600px; height:600px"></div>
+    <% end %>
+    <% else %>
+    <% unless @over3 == 1 && @over4 == 1 %> 
+    <div id='map' class="mt-4" style="width:600px; height:600px"></div>
+    <% end %>
+  <% end %>
 </div>
 
-<% if @destination_1 == @near1 %>
-  <% unless @over1 == 1 && @over2 == 1 %> 
-    <div id='map' style="width:500px; height:500px"></div>
-  <% end %>
-<% else %>
-  <% unless @over3 == 1 && @over4 == 1 %> 
-  <div id='map' style="width:500px; height:500px"></div>
-  <% end %>
-<% end %>
+
 
 
 
