@@ -34,7 +34,7 @@
 
     <!-- <h1 class="text-center">目的地を入力してください</h1> -->
     <%= text_field_tag(:destination_1, '', :class=>'mb-3', :placeholder=>'目的地を入力') %>
-
+        
     <!--1つ目の目的地入力フォーム-->
 
       <!--「詳細設定」をクリックすると時間が指定できる-->
@@ -55,6 +55,18 @@
                   <option value="<%=m%>"><%=m%>分</option> 
                 <% end %>
               </select> 
+            <h4>滞在時間を入力してください</h4>
+              <select class="ui search dropdown" name =<%=(:taizai1_h)%>>
+                <% for h in 0..23 %>
+                  <option value="<%=h%>"><%=h%>時間</option> 
+                <% end %>
+              </select>
+
+              <select class="ui search dropdown" name =<%=(:taizai1_m)%>>
+                <% 0.step(50, 10) do |m| %>
+                  <option value="<%=m%>"><%=m%>分</option> 
+                <% end %>
+              </select>
           <!--ここまで-->
         </div>
       </div>
@@ -62,16 +74,28 @@
     </br>
     　
     <!--2つ目の目的地入力フォーム-->
-      <%= text_field_tag(:destination_2, '', :class=>'mb-3', :placeholder=>'目的地を入力') %>
+    <%= text_field_tag(:destination_2, '', :class=>'mb-3', :placeholder=>'目的地を入力') %>
+    <!--「詳細設定」をクリックすると時間が指定できる-->
+      <div class="hidden_box">
+        <label for="label3" class="btn btn-outline-dark">詳細設定</label>
+        <input type="checkbox" id="label3"/>
+        <div class="hidden_show">
+          <!--非表示ここから-->
+            <h4>滞在時間を入力してください</h4>
+              <select class="ui search dropdown" name =<%=(:taizai2_h)%>>
+                <% for h in 0..23 %>
+                  <option value="<%=h%>"><%=h%>時間</option> 
+                <% end %>
+              </select>
 
-      <!--「詳細設定」をクリックすると時間が指定できる-->
-      <!-- <div class="hidden_box">
-        <label for="labe2" class="btn btn-outline-dark">詳細設定</label>
-        <input type="checkbox" id="label2"/>
-        <div class="hidden_show"> -->
-          <!--非表示ここから-->  
-        <!-- </div>
-      </div> -->
+              <select class="ui search dropdown" name =<%=(:taizai2_m)%>>
+                <% 0.step(50, 10) do |m| %>
+                  <option value="<%=m%>"><%=m%>分</option> 
+                <% end %>
+              </select>
+        </div>
+      </div>
+      
 
 
     </br>
