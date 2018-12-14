@@ -17,9 +17,15 @@ class DestinationFormController < ApplicationController
     @c_hour = @c_hour.to_i
     @c_minute = params[:c_minute]
     @c_minute = @c_minute.to_i
-    # 確認用の変数
-    @kak = 0
 
+    @taizai1_h = params[:taizai1_h]
+    @taizai1_h = @taizai1_h.to_i
+    @taizai1_m = params[:taizai1_m]
+    @taizai1_m = @taizai1_m.to_i
+    @taizai2_h = params[:taizai2_h]
+    @taizai2_h = @taizai2_h.to_i
+    @taizai2_m = params[:taizai2_m]
+    @taizai2_m = @taizai2_m.to_i
 
     @keiyu_array = [@destination_1, @destination_2] # 経由地
     @sk_res = []                                  # 出発地から経由地のjson(s:start, k:keiyu)
@@ -93,25 +99,11 @@ class DestinationFormController < ApplicationController
       @sk_minute = $`.to_i + @sk_minute
     end
 
-    # 分が60を越える時の設定(by t:1109)
-    if @sk_minute >= 60
-      @sk_hour += 1
-      @sk_minute -= 60
-    end
-
-    # 時間が24時を回る時の設定(by t:1109)
-    if @sk_hour >= 24
-      @sk_hour -= 24
-    end
-
-    # # 0-9分以内の場合の分表示の設定(by t:1109)
-    # if @sk_minute < 10
-    #   @sk_minute = "0" + @sk_minute.to_s
-    # end
+    @sk_hour, @sk_minute = zikan_henkan(@sk_hour, @sk_minute)
     
     # via→goalの時間の初期設定(by t:1109)
-    @skk_h = @sk_hour.to_i
-    @skk_m = @sk_minute.to_i
+    @skk_h = @sk_hour.to_i + @taizai1_h
+    @skk_m = @sk_minute.to_i + @taizai1_m
 
     if @kk_time =~ /\shours|\shour/
       @skk_h = @skk_h + $`.to_i
@@ -122,17 +114,7 @@ class DestinationFormController < ApplicationController
       @skk_m = $`.to_i + @skk_m
     end 
 
-    # 分が60を越える時の設定(by t:1109)
-    if @skk_m >= 60
-      @skk_h += 1
-      @skk_m -= 60
-    end
-
-    # 時間が24時を回る時の設定(by t:1109)
-    if @skk_h >= 24
-      @skk_h -= 24
-    end
-
+    @skk_h, @skk_m = zikan_henkan(@skk_h, @skk_m)
 
     # ---------------- 時間指定された時の計算 ------------------------
     @dif_hour = @c_hour.to_i - @hour.to_i       # 指定時間と出発時間の差分(h)
@@ -179,13 +161,12 @@ class DestinationFormController < ApplicationController
         @sd2d1minute = $`.to_i + @sd2minute
       end
 
-      if @sd2d1minute >= 60
-        @sd2d1hour = @sd2d1hour.to_i + 1
-        @sd2d1minute = @sd2d1minute - 60
-      end 
-      if @sd2d1hour.to_i >= 24
-        @sd2d1hour = @sd2d1hour.to_i - 24
-      end
+      #滞在時間考慮
+      @sd2d1hour += @taizai2_h
+      @sd2d1minute += @taizai2_m
+
+      @sd2d1hour, @sd2d1minute = zikan_henkan(@sd2d1hour, @sd2d1minute)
+
       @order_time = (@sd1hour.to_s + "." + @sd1minute.to_s).to_f
       @reverse_time = (@sd2d1hour.to_s + "." + @sd2d1minute.to_s).to_f
     
@@ -213,13 +194,13 @@ class DestinationFormController < ApplicationController
         @sd1d2hour = @sd1hour
         @sd1d2minute = $`.to_i + @sd1minute
       end
-      if @sd1d2minute.to_i >= 60
-        @sd1d2hour = @sd1d2hour.to_i + 1
-        @sd1d2minute -= 60
-      end
-      if @sd1d2hour.to_i >= 24
-        @sd1d2hour　= @sd1d2hour - 24
-      end
+
+      #滞在時間考慮
+      @sd1d2hour += @taizai1_h
+      @sd1d2minute += @taizai1_m
+
+      @sd1d2hour, @sd1d2minute = zikan_henkan(@sd1d2hour, @sd1d2minute)
+    
       @order_time = (@sd2d1hour.to_s + "." + @sd2d1minute.to_s).to_f
       @reverse_time = (@sd1d2hour.to_s + "." + @sd1d2minute.to_s).to_f
 
@@ -234,61 +215,69 @@ class DestinationFormController < ApplicationController
   #  (1/4)viewでの変数を、時刻ありきの時間に切り替える
    @gokei_sd2_h = @sd2hour + @hour.to_i
    @gokei_sd2_m = @sd2minute + @minute.to_i
-   if @gokei_sd2_m >= 60
-    @gokei_sd2_h += 1
-    @gokei_sd2_m -= 60
-   end
-
-   if @gokei_sd2_h >= 24
-    @gokei_sd2_h -= 24
-   end
+   @gokei_sd2_h, @gokei_sd2_m = zikan_henkan(@gokei_sd2_h, @gokei_sd2_m)
   
   #  (2/4)viewでの変数を、時刻ありきの時間に切り替える
    @gokei_sd2d1_h = @sd2d1hour.to_i + @hour.to_i
    @gokei_sd2d1_m = @sd2d1minute.to_i + @minute.to_i
 
-   if @gokei_sd2d1_m.to_i >= 60
-    @gokei_sd2d1_h += 1
-    @gokei_sd2d1_m -= 60
-   end
-
-   if @gokei_sd2d1_h >= 24
-    @gokei_sd2d1_h = @gokei_sd2d1_h - 24
-   end
+   @gokei_sd2d1_h, @gokei_sd2d1_m = zikan_henkan(@gokei_sd2d1_h, @gokei_sd2d1_m)
 
    #  (3/4)viewでの変数を、時刻ありきの時間に切り替える
    @gokei_sd1_h = @sd1hour + @hour.to_i
    @gokei_sd1_m = @sd1minute + @minute.to_i
-   if @gokei_sd1_m >= 60
-    @gokei_sd1_h += 1
-    @gokei_sd1_m -= 60
-   end
 
-   if @gokei_sd1_h >= 24
-    @gokei_sd1_h　= @gokei_sd1_h.to_i - 24
-   end
+   @gokei_sd1_h, @gokei_sd1_m = zikan_henkan(@gokei_sd1_h, @gokei_sd1_m)
 
   #  (4/4)viewでの変数を、時刻ありきの時間に切り替える
    @gokei_sd1d2_h = @sd1d2hour + @hour.to_i
    @gokei_sd1d2_m = @sd1d2minute.to_i + @minute.to_i
 
-   if @gokei_sd1d2_m >= 60
-    @gokei_sd1d2_h += 1
-    @gokei_sd1d2_m -= 60
-   end
-
-   if @gokei_sd1d2_h >= 24
-    @gokei_sd1d2_h　= @gokei_sd1d2_h - 24
-   end
-
+   @gokei_sd1d2_h, @gokei_sd1d2_m = zikan_henkan(@gokei_sd1d2_h, @gokei_sd1d2_m)
 
   #  時間のオーバー判定のための変数の作成と初期化
   @over1 = 0
   @over2 = 0
   @over3 = 0
   @over4 = 0
+  
+  ### 滞在後を入力するための変数用意 ###
 
-  @gokei_sd2_h
+  # <% if @orderz <= @reversez && @over1 == 0 %>と
+  # <% elsif @reversez <= @orderz && @over2 == 1 %>と
+  # <% elsif @reversez <= @orderz && @over4 == 1 %>の時
+  @stay1_h = @sk_hour + @taizai1_h
+  @stay1_m = @sk_minute + @taizai1_m
+
+  @stay1_h, @stay1_m = zikan_henkan(@stay1_h, @stay1_m)
+
+  # <% elsif @orderz <= @reversez && @over1 == 1 %>と
+  # <% elsif @reversez <= @orderz && @over2 == 0 %>
+  # <% if @orderz <= @reversez && @over3 == 0 %>の時
+  @stay2_h = @gokei_sd2_h + @taizai2_h
+  @stay2_m = @gokei_sd2_m + @taizai2_m  
+
+  @stay2_h, @stay2_m = zikan_henkan(@stay2_h, @stay2_m)
+
+  # <% elsif @orderz <= @reversez && @over3 == 1 %>
+  # <% elsif @reversez <= @orderz && @over4 == 0 %>の時
+  @stay3_h = @gokei_sd1_h + @taizai2_h
+  @stay3_m = @gokei_sd1_m + @taizai2_m
+
+  @stay3_h, @stay3_m = zikan_henkan(@stay3_h, @stay3_m)
 
   end
+
+  ######## 関数の定義 ###########
+  def zikan_henkan(h, m) # 時間の正規化
+    if m >= 60 
+      h += 1 
+      m -= 60
+    end
+    if h >= 24 
+      h -= 24 
+    end 
+    return h, m
+  end
+  
 end
