@@ -6,6 +6,9 @@ class DestinationFormController < ApplicationController
   def new
   end
 
+  def help
+  end
+
   def create
     @origin = params[:origin]
     @destination_1 = params[:destination_1]
