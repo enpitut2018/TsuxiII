@@ -95,25 +95,6 @@
 </div>
 <!---------------------------------------- ここからテスト --------------------------------------------------->
 <p>jQuery稼働テスト(未稼働)</p>
-<script type="text/javascript">
-  $(document).on("click", ".add", function () {
-    // 選択された親要素をコピーし、親要素の後に追加する
-    // ※親要素は<div id="item">になる
-    $(this).parent().clone(true).insertAfter($(this).parent());
-  });
-
-  // －ボタン(class="del")がクリックされたら
-  $(document).on("click", ".del", function () {
-    // 2ヵ所で使うので選択された親要素を変数targetに格納 ※親要素は<div id="item">になる
-    var target = $(this).parent();
-    // targetの親要素の配下の要素数が1以下だったら ※targetの親要素は<div id="list">になる
-    if(target.parent().children().length > 1){
-      // <div id="item">を削除する
-      target.remove();
-    }
-  });
-</script>
- 
 <div id="list">
   <section class="card" id="item">
   <%= text_field_tag(:destination_1, '', :class=>'mb-3 margin-10', :placeholder=>'目的地を入力') %>
@@ -139,9 +120,9 @@
         <option value="<%=m%>"><%=m%>分</option> 
       <% end %>
     </select>
+    <input type="button" value="－" class="del" style="width: 10%">
   </section>
   <input type="button" value="＋" class="add" style="width: 10%">
-  <input type="button" value="－" class="del" style="width: 10%">
 </div>
 <br>
 <br>
