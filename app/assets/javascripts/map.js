@@ -1,13 +1,19 @@
+var stopnum = routes.length -1;
 function initMap() {
   // ルート検索の条件
   var request = {
-    origin: origin, // 出発地
-    destination: distant,// 目的地
-    waypoints: [{ location: near}], //経由地
+    origin: routes[0], // 出発地
+    destination: routes[routes.length -1],// 目的地
+    waypoints: [], //経由地
     travelMode: google.maps.DirectionsTravelMode.DRIVING, // 交通手段(歩行。DRIVINGの場合は車)
     // optimizeWaypoints: true,
   };
-  // マップの生成
+  for(var i=1;i<stopnum;i++){
+    var locations = new Array();
+    locations["location"] = routes[i]
+    request['waypoints'].push(locations);
+  }
+    // マップの生成
   var map = new google.maps.Map(document.getElementById("map"), {
     center: new google.maps.LatLng(35.681382,139.766084), // マップの中心
   });

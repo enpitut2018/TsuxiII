@@ -7,9 +7,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
     <script>url="https://maps.googleapis.com/maps/api/distancematrix/json?";</script>
     <script>
-      origin ="<%= @routes[0] unless @routes.nil? %>";
+      var routes = [];
+      <% unless @routes.nil? %>
+        <% @routes.each{|route| %>
+        routes.push("<%= route %>");
+        <% } %>
+      <% end %>
+       origin ="<%= @routes[0] unless @routes.nil? %>";
       near = "<%= @routes[1] unless @routes.nil? %>";
-      distant = "<%= @routes[2] unless @routes.nil? %>";
+       distant = "<%= @routes[2] unless @routes.nil? %>";
     </script>
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
