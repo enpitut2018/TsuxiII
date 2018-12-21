@@ -14,9 +14,10 @@ class DestinationFormController < ApplicationController
     # public_class_method :new
     # attr_accessor :arrival, :departure
     # paramsの形を定義
-    params = { :origin => "Tsukuba", :destinations => ["Moriya","Tokyo"],
+    params = { :origin => "Tsukuba", :destinations => ["Moriya","Tokyo","Saitama"],
               :options => [{:depart=>Time.local(2018,12,19,11,10)},
-                            {:arrive=>Time.local(2018,12,19,12,20),:stay=>60},
+                            {:arrive=>nil,:stay=>nil},
+                            {:arrive=>nil,:stay=>nil},
                             {:arrive=>nil,:stay=>nil}]
               }
       
@@ -99,15 +100,19 @@ class DestinationFormController < ApplicationController
           if @arrival[i][j].nil?
             unless @departure[i][j-1].nil?
               @arrival[i][j] = @departure[i][j-1]+@time_matrix[@paths[i][j-1]][@paths[i][j]]
-              @departure[i][j] = @arrival[i][j]+@stay[i][j]
+              @departure[i][j] = @arrival[i][j]
+              # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
+              @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
             end
           else
-            @departure[i][j] = @arrival[i][j]+@stay[i][j]
+            @departure[i][j] = @arrival[i][j]
+            # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
+            @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
           end
 
           if @departure[i][j-1].nil?
             @available[i] = true
-          elsif @departure[i][j-1]+@time_matrix[@paths[i][j-1]][@paths[i][j]]<=@arrival[i][j]
+          elsif @departure[i][j-1]+@time_matrix[@paths[i][j-1]][@paths[i][j]] <= @arrival[i][j]
             @available[i] = true
           else
             @available[i] = false
@@ -133,7 +138,10 @@ class DestinationFormController < ApplicationController
         next if av==false
         @arrival.each_with_index.reverse_each{ |ar,j|
           break if ar.nil?
-          if j>0 || @departure[i][j-1].nil?
+          next if ar[j].nil?
+          # if j>0 || @departure[i][j-1].nil?
+          # 1221時点で、バグが発生していたところ
+          if j>1 and @departure[i][j-1].nil?
             @departure[i][j-1] = @arrival[i][j]-@time_matrix[@paths[i][j-1]][@paths[i][j]]
             @arrival[i][j-1] = @departure[i][j-1]-@stay[i][j-1] if j>1
           end
@@ -142,21 +150,33 @@ class DestinationFormController < ApplicationController
     end
 
     def select_best_path
-      return -1 if @available.all?{|av| av.nil?}
+      # av.nil?から、av==falseへ修正(もともとnilは入れていない問題解決)
+      return -1 if @available.all?{|av| av==false}
       best_path = 0
-      if @arrival.all?{|ar| ar.nil?}
+      if @arrival.all?{|ar| ar.all?{|a| a.nil?}}
+    # if @arrival.all?{|ar| ar.nil?}
         score_function = lambda {|i,j|
-          @time_matrix[@paths[i][j-1]][@paths[i][i]]
+          @time_matrix[@paths[i][j-1]][@paths[i][j]]
         }
       else
         score_function = lambda {|i,j|
-          #@arrival[i][j]-(@departure[i][j-1]+@time_matrix[@paths[i][j-1]][@paths[i][j]])
-          j==@paths.length-1 ? @arrival[i][j].to_i : 0
+          # @arrival[i][j]-(@departure[i][j-1]+@time_matrix[@paths[i][j-1]][@paths[i][j]])
+          # 多分先生のミス
+          # j==@paths.length-1 ? @arrival[i][j].to_i : 0
+          # @destinations+originの数=@destinations.length-1+1(origin)=@destinations.length
+          unless j == @destinations.length
+            return 0
+          else
+            return @arrival[i][j].to_i
+          end
         }
       end
       @paths.each_with_index{|path,i|
         puts @available[i]
-        break if @available[i]==false
+
+        # break→nextに修正(全てのスコアが0の問題解決)
+
+        next if @available[i]==false
         path.each_with_index{|point,j|
           next if j==0
           @scores[i] += score_function.call(i,j)
@@ -176,7 +196,7 @@ class DestinationFormController < ApplicationController
     def stringer_best_schedule(best_path)
       stringer = ""
       if best_path==-1
-          stringer += "条件に合うルートはありませんでした<br>"
+          stringer += "<h2>条件に合うルートはありませんでした</h2><br>"
           return stringer
       end
 
@@ -189,7 +209,9 @@ class DestinationFormController < ApplicationController
       stringer += "↓" + "<br>"
       @paths[best_path].each_with_index{|point,j|
         next if j==0
-        if j == @paths.length
+        # @destinations+originの数=@destinations.length-1+1(origin)=@destinations.length
+        stopindex = @destinations.length
+        if j == stopindex
           stringer += "地点：" + @destinations[point-1] + "<br>"
 
           # 行く順序に並べ替える
