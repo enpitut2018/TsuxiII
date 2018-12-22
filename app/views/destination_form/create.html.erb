@@ -1,175 +1,38 @@
 <div class="container">
   <h3>検索結果</h3>
 
+  ルート:<%= @routes %><br>
 
-<%= @hour %>:<%= @minute %>  <%= @origin %> 
-</br>
-↓
-</br>
+  ベストパス:<%= @best_path %><br>
 
-<!-- 時間以内に行けるかどうかの判断(時間オーバーの場合の変数の更新))
-もともとdestination_formで作成しておく必要がある
--->
+  スコア:<%= @scores %><br>
 
-<% if @destination_1 == @near1 %>
-  <% if @sk_hour > @c_hour %>
-    <% @over1 = 1 %>
-  <% elsif @sk_hour == @c_hour and @sk_minute > @c_minute %>
-    <% @over1 = 1 %>
+  タイムマトリックス:<%= @time_matrix %><br>
+
+
+
+  available:<%= @available %><br>
+
+  arrival:<%= @arrival %><br>
+
+  departure:<%= @departure %><br>
+
+  <%= @departure %>
+
+  パス:<%= @paths %><br>
+
+  origin:<%= @origin %><br>
+  destinations:<%= @destinations %><br>
+
+  string:<%= simple_format(@string) %><br>
+
+  <% if @mapnotview.nil? %>
+    <div id='map' class="mt-4" style="width:600px; height:600px"></div>
   <% end %>
-  <% if @gokei_sd2d1_h > @c_hour %>
-    <% @over2 = 1 %>
-  <% elsif @gokei_sd2d1_h == @c_hour and @gokei_sd2d1_m > @c_minute %>
-    <% @over2 = 1 %>  
-  <% end %>
-<% elsif @destination_1 == @near2 %>
-  <% if @skk_h > @c_hour %>
-    <% @over3 = 1 %>
-  <% elsif @skk_h == @c_hour and @skk_m > @c_minute %>  
-    <% @over3 = 1 %>
-  <% end %>
-  <% if @gokei_sd1_h > @c_hour %>
-    <% @over4 = 1 %>
-  <% elsif @gokei_sd1_h == @c_hour and @gokei_sd1_m > @c_minute %>  
-    <% @over4 = 1 %>
-  <% end %>
-<% end %>
 
-
-  <% if @destination_1 == @near1 %> <!--時間指定された方が近い方である時 -->
-
-    <% unless @over1 == 1 && @over2 == 1 %> <!--どっちかのルートは時間内におさまる -->
-      
-      <% if @orderz <= @reversez && @over1 == 0 %> <!--正規ルート(近い順)の方が良いし、時間オーバーしない -->
-
-        <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
-        </br>
-        ↓
-        </br>
-        <%= @stay1_h %>:<%= @stay1_m %> (滞在後)
-        </br>
-        ↓
-        </br>
-        <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %> 
-      
-      <% elsif @orderz <= @reversez && @over1 == 1 %> <!--正規ルート(近い順)の方が良いが、時間オーバーする -->
-
-        <% @near1, @near2 = @near2, @near1%>
-        <%= @gokei_sd2_h %>:<%= @gokei_sd2_m %>  <%= @near1 %>
-        </br>
-        ↓
-        </br>
-        <%= @stay2_h %>:<%= @stay2_m %> (滞在後)
-        </br>
-        ↓
-        </br>
-        <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near2 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
-
-      <% elsif @reversez <= @orderz && @over2 == 0 %> <!--非正規ルート(非近い順)の方が良いし、時間オーバーしない -->
-
-        <% @near1, @near2 = @near2, @near1%>
-        <%= @gokei_sd2_h %>:<%= @gokei_sd2_m %>  <%= @near1 %>
-        </br>
-        ↓
-        </br>
-        <%= @stay2_h %>:<%= @stay2_m %> (滞在後)
-        </br>
-        ↓
-        </br>
-        <%= @gokei_sd2d1_h %>:<%= @gokei_sd2d1_m %>  <%= @near2 %>   時間指定(<%= @c_hour%>:<%= @c_minute%>)
-
-      <% elsif @reversez <= @orderz && @over2 == 1 %> <!--非正規ルート(非近い順)の方が良いが、時間オーバーする -->
-
-        <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
-        </br>
-        ↓
-        </br>
-        <%= @stay1_h %>:<%= @stay1_m %> (滞在後)
-        </br>
-        ↓
-        </br>
-        <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %> 
-
-      <% end %>
-    
-    <% else %> <!--どっちのルートも時間オーバーする -->
-      <h2>条件にあうルートは見つかりません</h2>
-
-    <% end %>
-
-  <% elsif @destination_1 == @near2 %> <!--時間指定された方が遠い方だった時 -->
-
-    <% unless @over3 == 1 && @over4 == 1 %>
-      <% if @orderz <= @reversez && @over3 == 0 %>
-        <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  
-        </br>
-        ↓
-        </br>
-        <%= @stay1_h %>:<%= @stay1_m %> (滞在後)
-        </br>
-        ↓
-        </br>
-        <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
-
-      <% elsif @orderz <= @reversez && @over3 == 1 %>
-
-        <% @near1,@near2 = @near2, @near1%>
-
-        <%= @gokei_sd1_h %>:<%= @gokei_sd1_m %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
-        </br>
-        ↓
-        </br>
-        <%= @stay3_h %>:<%= @stay3_m %> (滞在後)
-        </br>
-        ↓
-        </br>
-        <%= @gokei_sd1d2_h %>:<%= @gokei_sd1d2_m %>  <%= @near2 %>  
-        
-      <% elsif @reversez <= @orderz && @over4 == 0 %>
-
-        <% @near1,@near2 = @near2, @near1%>
-
-        <%= @gokei_sd1_h %>:<%= @gokei_sd1_m %>  <%= @near1 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
-        </br>
-        ↓
-        </br>
-        <%= @stay3_h %>:<%= @stay3_m %> (滞在後)
-        </br>
-        ↓
-        </br>
-        <%= @gokei_sd1d2_h %>:<%= @gokei_sd1d2_m %>  <%= @near2 %>  
-      
-      <% elsif @reversez <= @orderz && @over4 == 1 %>
-        <%= @sk_hour %>:<%= @sk_minute %>  <%= @near1 %>  
-        </br>
-        ↓
-        </br>
-        <%= @stay1_h %>:<%= @stay1_m %> (滞在後)
-        </br>
-        ↓
-        </br>
-        <%= @skk_h %>:<%= @skk_m %>  <%= @near2 %>  時間指定(<%= @c_hour%>:<%= @c_minute%>)
-      <% end %>
-
-    <% else %>
-
-      <h2>条件にあうルートは見つかりません</h2>
-
-    <% end %>
-    
-  <% end %>  
-
-  <% if @destination_1 == @near1 %>
-    <% unless @over1 == 1 && @over2 == 1 %> 
-      <div id='map' class="mt-4" style="width:600px; height:600px"></div>
-    <% end %>
-  <% else %>
-    <% unless @over3 == 1 && @over4 == 1 %> 
-      <div id='map' class="mt-4" style="width:600px; height:600px"></div>
-    <% end %>
-  <% end %>
 
 </div>
+
 
 
 

@@ -10,277 +10,237 @@ class DestinationFormController < ApplicationController
   end
 
   def create
-    @origin = params[:origin]
-    @destination_1 = params[:destination_1]
-    @destination_2 = params[:destination_2]
-    @hour = params[:hour]
-    @minute = params[:minute]
-    
-    @c_hour = params[:c_hour]
-    @c_hour = @c_hour.to_i
-    @c_minute = params[:c_minute]
-    @c_minute = @c_minute.to_i
+    @api_key = ENV["API_KEY"]
+    # public_class_method :new
+    # attr_accessor :arrival, :departure
+    # paramsの形を定義
+    params = { :origin => "Tsukuba", :destinations => ["Moriya","Tokyo","Saitama"],
+              :options => [{:depart=>Time.local(2018,12,19,11,10)},
+                            {:arrive=>nil,:stay=>nil},
+                            {:arrive=>nil,:stay=>nil},
+                            {:arrive=>nil,:stay=>nil}]
+              }
+      
 
-    @taizai1_h = params[:taizai1_h]
-    @taizai1_h = @taizai1_h.to_i
-    @taizai1_m = params[:taizai1_m]
-    @taizai1_m = @taizai1_m.to_i
-    @taizai2_h = params[:taizai2_h]
-    @taizai2_h = @taizai2_h.to_i
-    @taizai2_m = params[:taizai2_m]
-    @taizai2_m = @taizai2_m.to_i
+    def search(params)
+      # 1. Google Map API で所要時間を取得する
+      result = ask_GoogleMap_API(params)
 
-    @keiyu_array = [@destination_1, @destination_2] # 経由地
-    @sk_res = []                                  # 出発地から経由地のjson(s:start, k:keiyu)
-    kk_res = []                                   # 経由地間のjson
-    sk_keisan =[]                                 # 出発地から経由地の途中計算
+      # 2. 出発地と目的地の場所をセットする
+      @origin = get_origin_from(result)
+      @destinations = get_destination_from(result)
 
-    
-    if @hour == "-1" || @minute == "-1"
-      d = DateTime.now
-      @hour = d.hour
-      @minute = d.minute
-    end
+      # 3. 所要時間行列を作る
+      @time_matrix = generate_time_matrix(result,@destinations.length+1)
 
+      # 4. パス検索のための前処理：配列を用意する
+      initialize_arrays_for_search
+      # 5. ユーザが指定した出発時刻や到着時刻などを設定する
+      set_search_options(params)
+      # 6. 指定した時間で回ることのできるパスを探す
+      find_available_paths
+      # 7. 各地点の到着・出発時刻を計算する
+      calculate_schedule
+      # 8. 実行可能なパスの中で一番いいパスを選択する
+      select_best_path
+    end 
 
-    # スタートからそれぞれの経由地の時間を取得する
-    [@destination_1, @destination_2].each do |d|
-      uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@origin+'&destinations='+d+'&mode=driving&key='+ENV['API_KEY'])
+    def ask_GoogleMap_API(params) 
+      ori = []
+      ori.push(params[:origin])
+      ori.concat(params[:destinations].slice(0..params[:destinations].length-2))
+      dst = params[:destinations]
+
+      uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+ori.join("|")+'&destinations='+dst.join("|")+'&mode=driving&key='+@api_key)
       json = Net::HTTP.get(URI.parse(uri))
-      @sk_res.push(JSON.parse(json))
+      result = JSON.parse(json)
     end
 
-    # 経由地間の時間を取得する
-    uri2 = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+@destination_1+'&destinations='+@destination_2+'&mode=driving&key='+ENV['API_KEY'])
-    json = Net::HTTP.get(URI.parse(uri2))
-    kk_res = JSON.parse(json)
+    def get_origin_from(result)
+      result["origin_addresses"][0]
+    end
 
-    @sk_res.each do |d|
-      time = d['rows'][0]['elements'][0]['duration']['text']
-      if time =~ /\shours|\shour/
-          hour = $`
-          if time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-              time_new = (hour.to_s + '.' + $+.to_s).to_f
-              sk_keisan.push(time_new)
+    def get_destination_from(result)
+      result["destination_addresses"]
+    end
+
+    def generate_time_matrix(result,length)
+      rows = result["rows"]
+
+      time_matrix = Array.new(length).map{Array.new(length,0)}
+
+      (0..length-2).each{ |i|
+        (0..length-2).each{ |j|
+          /^(\d*)\s*(hour|min)?s?\s*(\d*)(\smin)?.*$/ =~ rows[i]["elements"][j]["duration"]["text"]
+          $2=="hour" ? time_matrix[i][j+1] = $1.to_i * 3600 : time_matrix[i][j+1] = $1.to_i * 60
+          time_matrix[i][j+1] += $3.to_i * 60 unless $4.nil?
+          time_matrix[j+1][i] = time_matrix[i][j+1]
+        }
+      }
+      time_matrix
+    end
+
+    def initialize_arrays_for_search
+      @paths = [*1..@destinations.length].permutation(@destinations.length).to_a
+      @paths.map{ |p| p.unshift(0) }
+
+      @arrival = Array.new(@paths.length).map{Array.new(@destinations.length+1,nil)}
+      @stay = Array.new(@paths.length).map{Array.new(@destinations.length+1,3600)}
+      @departure = Array.new(@paths.length).map{Array.new(@destinations.length+1,nil)}
+      @available = Array.new(@paths.length,true)
+      @scores = Array.new(@paths.length,0)
+    end
+
+
+    def find_available_paths
+      @paths.each_with_index { |path,i|
+        path.each_with_index { |point,j|
+
+          next if j==0
+          if @arrival[i][j].nil?
+            unless @departure[i][j-1].nil?
+              @arrival[i][j] = @departure[i][j-1]+@time_matrix[@paths[i][j-1]][@paths[i][j]]
+              @departure[i][j] = @arrival[i][j]
+              # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
+              @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
+            end
+          else
+            @departure[i][j] = @arrival[i][j]
+            # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
+            @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
           end
-      elsif time =~ /\smins|\smin/
-          time_new = ("0." + $`.to_s).to_f
-          sk_keisan.push(time_new)
-      end
-  
-    end
-    
-    # {経由地 => 出発地から経由地の途中計算} #値でsort
-    hash = Hash[@keiyu_array.zip sk_keisan]
-    sk_hash = Hash[hash.sort_by{ |_, v| v }]
 
-    @near1 = sk_hash.keys[0]
-    @near2 = sk_hash.keys[1]
-
-    # {出発地から経由地のjson => 出発地から経由地の途中計算} #値でsort
-    hash2 = Hash[@sk_res.zip sk_keisan]
-    sk_hash_res = Hash[hash2.sort_by{ |_, v| v }]
-
-    # スタートから近い経由地までの時間
-    @sk_time = sk_hash_res.keys[0]['rows'][0]['elements'][0]['duration']['text']
-    # 近い経由地から経由地までの時間
-    @kk_time = kk_res['rows'][0]['elements'][0]['duration']['text']
-
-
-    # ------------ s(スタート)からk(経由地1)までの時間演算---------------
-
-    # start→viaの時間の初期設定(by t:1109)
-    @sk_hour = @hour.to_i
-    @sk_minute = @minute.to_i
-
-    if @sk_time =~ /\shours|\shour/
-      @sk_hour = $`.to_i + @sk_hour
-      if @sk_time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-        @sk_minute = $+.to_i + @sk_minute
-      end
-    elsif @sk_time =~ /\smins|\smin/
-      @sk_minute = $`.to_i + @sk_minute
+          if @departure[i][j-1].nil?
+            @available[i] = true
+          elsif @departure[i][j-1]+@time_matrix[@paths[i][j-1]][@paths[i][j]] <= @arrival[i][j]
+            @available[i] = true
+          else
+            @available[i] = false
+            break
+          end
+        } 
+      }
     end
 
-    @sk_hour, @sk_minute = zikan_henkan(@sk_hour, @sk_minute)
-    
-    # via→goalの時間の初期設定(by t:1109)
-    @skk_h = @sk_hour.to_i + @taizai1_h
-    @skk_m = @sk_minute.to_i + @taizai1_m
-
-    if @kk_time =~ /\shours|\shour/
-      @skk_h = @skk_h + $`.to_i
-      if @kk_time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-        @skk_m = @skk_m + $+.to_i
-      end
-    elsif @kk_time =~ /\smins|\smin/
-      @skk_m = $`.to_i + @skk_m
-    end 
-
-    @skk_h, @skk_m = zikan_henkan(@skk_h, @skk_m)
-
-    # ---------------- 時間指定された時の計算 ------------------------
-    @dif_hour = @c_hour.to_i - @hour.to_i       # 指定時間と出発時間の差分(h)
-    @dif_minute = @c_minute.to_i - @minute.to_i # 指定時間と出発時間の差分(m)
-    @dif_time = (@dif_hour.to_s + "." + @dif_minute.to_s).to_f # 後の比較用
-
-    # 変数定義&初期化
-    @sd1hour = 0    #s→d1の差分(h)
-    @sd1minute = 0  #s→d1の差分(m)
-    @sd2time = @sk_res[1]['rows'][0]['elements'][0]['duration']['text']
-    @sd2hour = 0    #s→d2の差分(h)
-    @sd2minute = 0  #s→d2の差分(m)
-    @sd1d2hour = 0  #s→d1→d2の差分(h)
-    @sd1d2minute　= 0  #s→d1→d2の差分(m)
-    @sd2d1hour　= 0    #s→d2→d1の差分(h)
-    @sd2d1minute = 0   #s→d2→d1の差分(m)
-    @order_time = 0    #正規ルート(近い順)で行った時の時間(小数)
-    @reverse_time = 0  #非正規ルートで行った時の時間(小数)
-    @orderz = 0   #@order_time - @dif_timeの絶対値
-    @reversez = 0  #reverse_time - @dif_timeの絶対値
-
-    # 時間指定した場所が出発地に近い時 
-    if @destination_1 == @near1
-      @sd1hour = @sk_hour - @hour.to_i
-      @sd1minute = @sk_minute - @minute.to_i
-
-      if @sd2time =~ /\shours|\shour/
-        @sd2hour = $`.to_i
-        if @sd2time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-          @sd2minute = $+.to_i
-        end
-      elsif @sd2time =~ /\smins|\smin/
-        @sd2minute = $`.to_i
-      end
-
-      if @kk_time =~ /\shours|\shour/
-        @sd2d1hour = @sd2hour + $`.to_i
-        if @kk_time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-          @sd2d1minute = @sd2minute + $+.to_i
-        end
-      elsif @kk_time =~ /\smins|\smin/
-       # 追加と修正(1207)
-        @sd2d1hour = @sd2hour
-        @sd2d1minute = $`.to_i + @sd2minute
-      end
-
-      #滞在時間考慮
-      @sd2d1hour += @taizai2_h
-      @sd2d1minute += @taizai2_m
-
-      @sd2d1hour, @sd2d1minute = zikan_henkan(@sd2d1hour, @sd2d1minute)
-
-      @order_time = (@sd1hour.to_s + "." + @sd1minute.to_s).to_f
-      @reverse_time = (@sd2d1hour.to_s + "." + @sd2d1minute.to_s).to_f
-    
-    # 時間指定した場所が出発地に遠い時
-    elsif @destination_1 == @near2
-      @sd2d1hour = @skk_h - @hour.to_i
-      @sd2d1minute = @skk_m - @minute.to_i
-
-      if @sd2time =~ /\shours|\shour/
-        @sd1hour = $`.to_i
-        if @sd2time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-          @sd1minute = $+.to_i
-        end
-      elsif @sd2time =~ /\smins|\smin/
-        @sd1minute = $`.to_i
-      end
-
-      if @kk_time =~ /\shours|\shour/
-        @sd1d2hour = @sd1hour + $`.to_i
-        if @kk_time =~ /\shours\s(.+)\smins|\shours\s(.+)\smin|\shour\s(.+)\smins|\shour\s(.+)\smin/
-          @sd1d2minute = @sd1minute + $+.to_i
-        end
-      elsif @kk_time =~ /\smins|\smin/
-        # 追加と修正(1207)
-        @sd1d2hour = @sd1hour
-        @sd1d2minute = $`.to_i + @sd1minute
-      end
-
-      #滞在時間考慮
-      @sd1d2hour += @taizai1_h
-      @sd1d2minute += @taizai1_m
-
-      @sd1d2hour, @sd1d2minute = zikan_henkan(@sd1d2hour, @sd1d2minute)
-    
-      @order_time = (@sd2d1hour.to_s + "." + @sd2d1minute.to_s).to_f
-      @reverse_time = (@sd1d2hour.to_s + "." + @sd1d2minute.to_s).to_f
-
+    def set_search_options(params)
+      @paths.each_with_index { |path,i|
+        path.each_with_index { |point,j|
+          options = params[:options][point]
+          @arrival[i][j] = options[:arrive] unless options[:arrive].nil?
+          @departure[i][j] = options[:depart] unless options[:depart].nil?
+          @stay[i][j] = options[:stay].to_i*60 unless options[:stay].nil?
+        }
+      }
     end
-  
-   # -------- create.html.erbで使うための変数 -------------
-   @orderz = (@order_time - @dif_time).abs
-   @reversez = (@reverse_time - @dif_time).abs
-  
-   # 差分を時刻にする
 
-  #  (1/4)viewでの変数を、時刻ありきの時間に切り替える
-   @gokei_sd2_h = @sd2hour + @hour.to_i
-   @gokei_sd2_m = @sd2minute + @minute.to_i
-   @gokei_sd2_h, @gokei_sd2_m = zikan_henkan(@gokei_sd2_h, @gokei_sd2_m)
-  
-  #  (2/4)viewでの変数を、時刻ありきの時間に切り替える
-   @gokei_sd2d1_h = @sd2d1hour.to_i + @hour.to_i
-   @gokei_sd2d1_m = @sd2d1minute.to_i + @minute.to_i
-
-   @gokei_sd2d1_h, @gokei_sd2d1_m = zikan_henkan(@gokei_sd2d1_h, @gokei_sd2d1_m)
-
-   #  (3/4)viewでの変数を、時刻ありきの時間に切り替える
-   @gokei_sd1_h = @sd1hour + @hour.to_i
-   @gokei_sd1_m = @sd1minute + @minute.to_i
-
-   @gokei_sd1_h, @gokei_sd1_m = zikan_henkan(@gokei_sd1_h, @gokei_sd1_m)
-
-  #  (4/4)viewでの変数を、時刻ありきの時間に切り替える
-   @gokei_sd1d2_h = @sd1d2hour + @hour.to_i
-   @gokei_sd1d2_m = @sd1d2minute.to_i + @minute.to_i
-
-   @gokei_sd1d2_h, @gokei_sd1d2_m = zikan_henkan(@gokei_sd1d2_h, @gokei_sd1d2_m)
-
-  #  時間のオーバー判定のための変数の作成と初期化
-  @over1 = 0
-  @over2 = 0
-  @over3 = 0
-  @over4 = 0
-  
-  ### 滞在後を入力するための変数用意 ###
-
-  # <% if @orderz <= @reversez && @over1 == 0 %>と
-  # <% elsif @reversez <= @orderz && @over2 == 1 %>と
-  # <% elsif @reversez <= @orderz && @over4 == 1 %>の時
-  @stay1_h = @sk_hour + @taizai1_h
-  @stay1_m = @sk_minute + @taizai1_m
-
-  @stay1_h, @stay1_m = zikan_henkan(@stay1_h, @stay1_m)
-
-  # <% elsif @orderz <= @reversez && @over1 == 1 %>と
-  # <% elsif @reversez <= @orderz && @over2 == 0 %>
-  # <% if @orderz <= @reversez && @over3 == 0 %>の時
-  @stay2_h = @gokei_sd2_h + @taizai2_h
-  @stay2_m = @gokei_sd2_m + @taizai2_m  
-
-  @stay2_h, @stay2_m = zikan_henkan(@stay2_h, @stay2_m)
-
-  # <% elsif @orderz <= @reversez && @over3 == 1 %>
-  # <% elsif @reversez <= @orderz && @over4 == 0 %>の時
-  @stay3_h = @gokei_sd1_h + @taizai2_h
-  @stay3_m = @gokei_sd1_m + @taizai2_m
-
-  @stay3_h, @stay3_m = zikan_henkan(@stay3_h, @stay3_m)
-
-  end
-
-  ######## 関数の定義 ###########
-  def zikan_henkan(h, m) # 時間の正規化
-    if m >= 60 
-      h += 1 
-      m -= 60
+    def calculate_schedule
+      @available.each_with_index{ |av,i|
+        next if av==false
+        @arrival.each_with_index.reverse_each{ |ar,j|
+          break if ar.nil?
+          next if ar[j].nil?
+          # if j>0 || @departure[i][j-1].nil?
+          # 1221時点で、バグが発生していたところ
+          if j>1 and @departure[i][j-1].nil?
+            @departure[i][j-1] = @arrival[i][j]-@time_matrix[@paths[i][j-1]][@paths[i][j]]
+            @arrival[i][j-1] = @departure[i][j-1]-@stay[i][j-1] if j>1
+          end
+        }
+      }
     end
-    if h >= 24 
-      h -= 24 
-    end 
-    return h, m
+
+    def select_best_path
+      # av.nil?から、av==falseへ修正(もともとnilは入れていない問題解決)
+      return -1 if @available.all?{|av| av==false}
+      best_path = 0
+      if @arrival.all?{|ar| ar.all?{|a| a.nil?}}
+    # if @arrival.all?{|ar| ar.nil?}
+        score_function = lambda {|i,j|
+          @time_matrix[@paths[i][j-1]][@paths[i][j]]
+        }
+      else
+        score_function = lambda {|i,j|
+          # @arrival[i][j]-(@departure[i][j-1]+@time_matrix[@paths[i][j-1]][@paths[i][j]])
+          # 多分先生のミス
+          # j==@paths.length-1 ? @arrival[i][j].to_i : 0
+          # @destinations+originの数=@destinations.length-1+1(origin)=@destinations.length
+          unless j == @destinations.length
+            return 0
+          else
+            return @arrival[i][j].to_i
+          end
+        }
+      end
+      @paths.each_with_index{|path,i|
+        puts @available[i]
+
+        # break→nextに修正(全てのスコアが0の問題解決)
+
+        next if @available[i]==false
+        path.each_with_index{|point,j|
+          next if j==0
+          @scores[i] += score_function.call(i,j)
+        }
+        puts "["+i.to_s+"] score"+@scores[i].to_s
+        best_path = i if @scores[i]<=@scores[best_path]
+      }
+      best_path
+    end
+
+    # 配列の初期化
+    @routes = Array.new()
+
+
+    # 出力結果を、1行の文字列として作成すると同時に、application.html.erb内の<script>内で、
+    # 地図表示のそれぞれの場所を記録した@routesを作成する為のメソッドを定義
+    def stringer_best_schedule(best_path)
+      stringer = ""
+      if best_path==-1
+          stringer += "<h2>条件に合うルートはありませんでした</h2><br>"
+          return stringer
+      end
+
+      stringer +=  "出発地：" + @origin + "<br>"
+
+      # 行く順序に並べ替える
+      @routes.push(@origin)
+
+      stringer += "　出発：" + @departure[best_path][0].strftime("%H:%M") + "<br>"
+      stringer += "↓" + "<br>"
+      @paths[best_path].each_with_index{|point,j|
+        next if j==0
+        # @destinations+originの数=@destinations.length-1+1(origin)=@destinations.length
+        stopindex = @destinations.length
+        if j == stopindex
+          stringer += "地点：" + @destinations[point-1] + "<br>"
+
+          # 行く順序に並べ替える
+          @routes.push(@destinations[point-1])
+
+          stringer += "　到着： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
+          return stringer
+        end
+
+        stringer += "地点：" + @destinations[point-1] + "<br>"
+
+        # 行く順序に並べ替える
+        @routes.push(@destinations[point-1])
+
+        stringer += "　到着： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
+        stringer += "　出発： " + @departure[best_path][j].strftime("%H:%M") + "<br>"
+        stringer += "↓" + "<br>"
+      }
+      return stringer
+    end
+
+    @best_path = search(params)
+    @string = stringer_best_schedule(@best_path)
+
+    if @best_path == -1
+      @mapnotview = 0
+    end
+
+    # @trippath.print_best_schedule(@best_path)
   end
   
 end
