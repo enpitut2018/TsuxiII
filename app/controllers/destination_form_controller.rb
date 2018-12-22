@@ -14,11 +14,25 @@ class DestinationFormController < ApplicationController
     # public_class_method :new
     # attr_accessor :arrival, :departure
     # paramsの形を定義
-    params = { :origin => "Tsukuba", :destinations => ["Moriya","Tokyo","Saitama"],
-              :options => [{:depart=>Time.local(2018,12,19,11,10)},
+    # params = { :origin => "Tsukuba", :destinations => ["Moriya","Tokyo","Saitama","静岡駅","熱海駅","栃木駅","新潟駅","東京ディズニーシー"],
+    #           :options => [{:depart=>Time.local(2018,12,19,11,10)},
+    #                         {:arrive=>nil,:stay=>nil},
+    #                         {:arrive=>nil,:stay=>nil},
+    #                         {:arrive=>nil,:stay=>nil},
+    #                         {:arrive=>nil,:stay=>nil},
+    #                         {:arrive=>nil,:stay=>nil},
+    #                         {:arrive=>nil,:stay=>nil},
+    #                         {:arrive=>nil,:stay=>nil},
+    #                         {:arrive=>nil,:stay=>nil}
+    #                       ]
+    #           }
+    params = { :origin => "Tsukuba", :destinations => ["静岡駅","熱海駅","栃木駅","東京ディズニーシー"],
+              :options => [{:depart=>nil},
                             {:arrive=>nil,:stay=>nil},
                             {:arrive=>nil,:stay=>nil},
-                            {:arrive=>nil,:stay=>nil}]
+                            {:arrive=>nil,:stay=>nil},
+                            {:arrive=>nil,:stay=>nil}
+                          ]
               }
       
 
@@ -88,6 +102,7 @@ class DestinationFormController < ApplicationController
       @stay = Array.new(@paths.length).map{Array.new(@destinations.length+1,3600)}
       @departure = Array.new(@paths.length).map{Array.new(@destinations.length+1,nil)}
       @available = Array.new(@paths.length,true)
+      # 不可能なパスの@scores[i]=0にするために
       @scores = Array.new(@paths.length,0)
     end
 
@@ -204,21 +219,30 @@ class DestinationFormController < ApplicationController
 
       # 行く順序に並べ替える
       @routes.push(@origin)
+      # 時間指定が全くない場合の記述1
+      unless @departure.all?{|de| de.all?{|d| d.nil?}}
+        stringer += "　出発：" + @departure[best_path][0].strftime("%H:%M")  + "<br>"
+        stringer += "↓" + "<br>"
+      else
+        stringer += "<br>"
+      end
 
-      stringer += "　出発：" + @departure[best_path][0].strftime("%H:%M") + "<br>"
-      stringer += "↓" + "<br>"
       @paths[best_path].each_with_index{|point,j|
         next if j==0
         # @destinations+originの数=@destinations.length-1+1(origin)=@destinations.length
         stopindex = @destinations.length
         if j == stopindex
-          stringer += "地点：" + @destinations[point-1] + "<br>"
+          stringer += "到着地点：" + @destinations[point-1] + "<br>"
 
           # 行く順序に並べ替える
           @routes.push(@destinations[point-1])
-
-          stringer += "　到着： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
-          return stringer
+          # 時間指定が全くない場合の記述2
+          unless @arrival.all?{|ar| ar.all?{|a| a.nil?}}
+            stringer += "　到着： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
+          else
+            stringer += "<br>"
+          end
+            return stringer
         end
 
         stringer += "地点：" + @destinations[point-1] + "<br>"
@@ -226,9 +250,14 @@ class DestinationFormController < ApplicationController
         # 行く順序に並べ替える
         @routes.push(@destinations[point-1])
 
-        stringer += "　到着： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
-        stringer += "　出発： " + @departure[best_path][j].strftime("%H:%M") + "<br>"
-        stringer += "↓" + "<br>"
+        # 時間指定が全くない場合の記述3
+        unless @departure.all?{|de| de.all?{|d| d.nil?}} or @arrival.all?{|ar| ar.all?{|a| a.nil?}}
+          stringer += "　到着： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
+          stringer += "　出発： " + @departure[best_path][j].strftime("%H:%M") + "<br>"
+          stringer += "↓" + "<br>"
+        else
+          stringer += "<br>"
+        end
       }
       return stringer
     end
