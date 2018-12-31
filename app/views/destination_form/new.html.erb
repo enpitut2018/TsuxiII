@@ -1,150 +1,40 @@
 <div class="container mt-5">
   <%= form_tag("/create", method: "post", class: "box-center") do %>
-    <!-- <h1 class="text-center">出発地を入力してください</h1> -->
-      <%= text_field_tag(:origin, '', :class=>'mb-3 mt-1', :placeholder=>'出発地を入力') %>
-    </br>
-    <div class="hidden_box">
-      <label for="label1" class="btn btn-outline-dark">時間指定</label>
-      <input type="checkbox" id="label1"/>
-      <div class="hidden_show">
-        <!--非表示ここから-->     
-        <h3>出発時刻を入力してください</h3>
-        <select class="ui search dropdown" name =<%=(:hour)%>>
-          <option value="-1">現在</option>
-          <% for h in 0..23 %>
-            <option value="<%=h%>"><%=h%>時</option> 
-          <% end %>
-        </select>
-        <select class="ui search dropdown" name =<%=(:minute)%>>
-          <option value="-1">時刻</option>
-          <% 0.step(50, 10) do |m| %>
-            <option value="<%=m%>"><%=m%>分</option> 
-          <% end %>
-        </select>
-      <!--ここまで-->
-      </div>
-    </div>
+    <h5>使い方:時間の入力は半角の「10:10」のような形式で指定してください</h5>
+    <h1 class="text-center">出発地を入力してください</h1>
+    <%= text_field_tag(:origin, '', :class=>'mb-3 mt-1', :placeholder=>'出発地を入力') %>
+
     </br>
     <!-- <h1 class="text-center">目的地を入力してください</h1> -->
-    <div id="item">
-      <%= text_field_tag(:destinations, '', :class=>'mb-3', :placeholder=>'目的地を入力') %>
-    <!--1つ目の目的地入力フォーム-->
-      <!--「詳細設定」をクリックすると時間が指定できる-->
-      <div class="hidden_box">
-        <label for="label2" class="btn btn-outline-dark">詳細設定</label>
-        <input type="checkbox" id="label2"/>
-        <div class="hidden_show">
-          <!--非表示ここから-->  
-            <h4>何時までに到着したいですか？</h4>
-              <select class="ui search dropdown" name =<%=(:c_hour)%>>
-                <% for h in 0..23 %>
-                  <option value="<%=h%>"><%=h%>時</option> 
-                <% end %>
-              </select>
-
-              <select class="ui search dropdown" name =<%=(:c_minute)%>>
-                <% 0.step(50, 10) do |m| %>
-                  <option value="<%=m%>"><%=m%>分</option> 
-                <% end %>
-              </select> 
-            <h4>滞在時間を入力してください</h4>
-              <select class="ui search dropdown" name =<%=(:taizai1_h)%>>
-                <% for h in 0..23 %>
-                  <option value="<%=h%>"><%=h%>時間</option> 
-                <% end %>
-              </select>
-
-              <select class="ui search dropdown" name =<%=(:taizai1_m)%>>
-                <% 0.step(50, 10) do |m| %>
-                  <option value="<%=m%>"><%=m%>分</option> 
-                <% end %>
-              </select>
-          <!--ここまで-->
-        </div>
-      </div>
-    </div>
     
+    <div id="items">
+      <%= text_field_tag('options[][depart]', '', :class=>'mb-3', :placeholder=>'出発時間を入力') %>
+      <%= hidden_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
+      <%= hidden_field_tag('options[][stay]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
+        <div id="list">
+          <section class="card" id="item">
+            <h3 class="text-center">目的地を入力してください</h3>
+            <%= text_field_tag('destinations[]', '', :class=>'mb-3 margin-10', :placeholder=>'目的地を入力') %>
+            <h4>何時までに到着したいですか？</h4>
+            <%= text_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
 
-    </br>
-    　
-    <!--2つ目の目的地入力フォーム-->
-    <%= text_field_tag(:destination_2, '', :class=>'mb-3', :placeholder=>'目的地を入力') %>
-    <!--「詳細設定」をクリックすると時間が指定できる-->
-      <div class="hidden_box">
-        <label for="label3" class="btn btn-outline-dark">詳細設定</label>
-        <input type="checkbox" id="label3"/>
-        <div class="hidden_show">
-          <!--非表示ここから-->
             <h4>滞在時間を入力してください</h4>
-              <select class="ui search dropdown" name =<%=(:taizai2_h)%>>
-                <% for h in 0..23 %>
-                  <option value="<%=h%>"><%=h%>時間</option> 
-                <% end %>
-              </select>
-
-              <select class="ui search dropdown" name =<%=(:taizai2_m)%>>
-                <% 0.step(50, 10) do |m| %>
-                  <option value="<%=m%>"><%=m%>分</option> 
-                <% end %>
-              </select>
+            <select class="ui search dropdown" name =<%=('options[][stay]')%>>
+              # <!--https://code.i-harness.com/ja/q/35ae32を参考にデフォルト値の作成 -->
+              <option value="" selected>指定なし</option>
+              <% for h in 0..23 %>
+                <option value="<%=h%>"><%=h%>時間</option> 
+              <% end %>
+            </select>
+            <input type="button" value="－" class="del btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem">
+          </section>
+          <input type="button" value="＋" class="add btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem">
         </div>
-      </div>
-    </br>
+    </div>
+    <br>
     <%= submit_tag("検索する", :class=>"btn btn-secondary btn-lg")%>
   <% end %>
+
 </div>
-<!---------------------------------------- ここからテスト --------------------------------------------------->
-<p>jQuery稼働テスト(未稼働)</p>
-<%= text_field_tag(:origin, '', :class=>'mb-3 mt-1', :placeholder=>'出発地を入力') %>
-<div id="list">
-  <section class="card" id="item">
-  <%= text_field_tag(:destination_1, '', :class=>'mb-3 margin-10', :placeholder=>'目的地を入力') %>
-    <h4>何時までに到着したいですか？</h4>
-    <select class="ui search dropdown" name =<%=(:c_hour)%>>
-      <% for h in 0..23 %>
-        <option value="<%=h%>"><%=h%>時</option> 
-      <% end %>
-    </select>
-    <select class="ui search dropdown" name =<%=(:c_minute)%>>
-      <% 0.step(50, 10) do |m| %>
-        <option value="<%=m%>"><%=m%>分</option> 
-      <% end %>
-    </select> 
-    <h4>滞在時間を入力してください</h4>
-    <select class="ui search dropdown" name =<%=(:taizai1_h)%>>
-      <% for h in 0..23 %>
-        <option value="<%=h%>"><%=h%>時間</option> 
-      <% end %>
-    </select>
-    <select class="ui search dropdown" name =<%=(:taizai1_m)%>>
-      <% 0.step(50, 10) do |m| %>
-        <option value="<%=m%>"><%=m%>分</option> 
-      <% end %>
-    </select>
-    <input type="button" value="－" class="del btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem">
-  </section>
-  <input type="button" value="＋" class="add btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem">
-</div>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 
-
-
-
-
-
-
+  

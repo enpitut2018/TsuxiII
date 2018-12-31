@@ -9,8 +9,51 @@ class DestinationFormController < ApplicationController
   def help
   end
 
+  # 謎の文追加(https://qiita.com/ayacai115/items/ec7a621ec73692065d7aの、ActionController::InvalidAuthenticityTokenの対処法参照)
+  protect_from_forgery except: :create # createアクションを除外
+
   def create
+
+    @dev = 0
+    @dev2 = 0
+    @dev3 = 0
     @api_key = ENV["API_KEY"]
+
+    unless params[:origin].present?
+      params[:origin] = "つくば駅"
+    end
+    
+    params[:destinations].each{ |n|
+      unless n.present?
+        n = nil
+      end
+    }
+
+    params[:options].each{ |n|
+      unless n[:depart].nil?
+        if n[:depart].empty?
+          n[:depart] = nil
+        else
+          /:/ =~ n[:depart]
+          n[:depart] = Time.local(2018,12,19,$`,$')
+        end
+      end
+
+      if n[:arrive].empty?
+        n[:arrive] = nil
+      else
+        /:/ =~ n[:arrive]
+        n[:arrive] = Time.local(2018,12,19,$`,$')
+      end
+
+      if n[:stay].empty?
+        n[:stay] = nil
+      else
+        n[:stay] = n[:stay].to_i * 60
+      end
+    }
+
+
     # public_class_method :new
     # attr_accessor :arrival, :departure
     # paramsの形を定義
@@ -26,15 +69,14 @@ class DestinationFormController < ApplicationController
     #                         {:arrive=>nil,:stay=>nil}
     #                       ]
     #           }
-    params = { :origin => "Tsukuba", :destinations => ["静岡駅","熱海駅","栃木駅","東京ディズニーシー"],
-              :options => [{:depart=>nil},
-                            {:arrive=>nil,:stay=>nil},
-                            {:arrive=>nil,:stay=>nil},
-                            {:arrive=>nil,:stay=>nil},
-                            {:arrive=>nil,:stay=>nil}
-                          ]
-              }
-      
+    # params = { :origin => "Tsukuba", :destinations => ["静岡駅","熱海駅","栃木駅","東京ディズニーシー"],
+    #           :options => [{:depart=>nil},
+    #                         {:arrive=>nil,:stay=>nil},
+    #                         {:arrive=>nil,:stay=>nil},
+    #                         {:arrive=>nil,:stay=>nil},
+    #                         {:arrive=>nil,:stay=>nil}
+    #                       ]
+    #           }
 
     def search(params)
       # 1. Google Map API で所要時間を取得する
@@ -151,14 +193,20 @@ class DestinationFormController < ApplicationController
     def calculate_schedule
       @available.each_with_index{ |av,i|
         next if av==false
-        @arrival.each_with_index.reverse_each{ |ar,j|
-          break if ar.nil?
-          next if ar[j].nil?
+        @arrival[i].each_with_index.reverse_each{ |ar,j|
+          @dev2 = ar
+          # 重要!!!!!!1231でバグ発生場所()!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          # 原因=配列のループを回して、その次の要素に変更を加えた場合でも、arの値は更新されず、arrival[i][j-1]
+          # しか反映されていないため、arにnil判定を加えると、前回に更新していてもループがうまく回らない
+          # これは、次のループ要素に対する変更を加えていることで起きる
+          # next if ar==nil
           # if j>0 || @departure[i][j-1].nil?
           # 1221時点で、バグが発生していたところ
-          if j>1 and @departure[i][j-1].nil?
+          if j>0 and @departure[i][j-1].nil?
+            @dev = 2*j
             @departure[i][j-1] = @arrival[i][j]-@time_matrix[@paths[i][j-1]][@paths[i][j]]
-            @arrival[i][j-1] = @departure[i][j-1]-@stay[i][j-1] if j>1
+            @dev3 = @departure[i][j-1]
+            @arrival[i][j-1] = @departure[i][j-1]-@stay[i][j-1] if j>0
           end
         }
       }
