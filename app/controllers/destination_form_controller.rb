@@ -193,6 +193,8 @@ class DestinationFormController < ApplicationController
     def calculate_schedule
       @available.each_with_index{ |av,i|
         next if av==false
+        # 1231修正(時間指定が全くない場合のために)
+        next if @arrival[i].all?{|ar| ar==nil}
         @arrival[i].each_with_index.reverse_each{ |ar,j|
           @dev2 = ar
           # 重要!!!!!!1231でバグ発生場所()!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -202,12 +204,14 @@ class DestinationFormController < ApplicationController
           # next if ar==nil
           # if j>0 || @departure[i][j-1].nil?
           # 1221時点で、バグが発生していたところ
-          if j>0 and @departure[i][j-1].nil?
-            @dev = 2*j
-            @departure[i][j-1] = @arrival[i][j]-@time_matrix[@paths[i][j-1]][@paths[i][j]]
-            @dev3 = @departure[i][j-1]
-            @arrival[i][j-1] = @departure[i][j-1]-@stay[i][j-1] if j>0
-          end
+          # unless ar==nil~endは不要→どこか1地点でも指定があれば、その地点から最後までの到着、出発は決まり、
+          # 逆順からのループを用いる場合は考慮する必要がなくなる
+            if j>0 and @departure[i][j-1].nil?
+              @dev = 2*j
+              @departure[i][j-1] = @arrival[i][j]-@time_matrix[@paths[i][j-1]][@paths[i][j]]
+              @dev3 = @departure[i][j-1]
+              @arrival[i][j-1] = @departure[i][j-1]-@stay[i][j-1] if j>0
+            end
         }
       }
     end
