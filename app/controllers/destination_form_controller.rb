@@ -30,12 +30,27 @@ class DestinationFormController < ApplicationController
     }
 
     params[:options].each{ |n|
+      # 0104 受け取りフォームで、までに(:by)と時間ぴったし(:arrive)のどちらもが与えられている場合は、(:arriveのみに変更)
+      if n[:by].present? and n[:arrive].present?
+        n[:by] = nil
+      end
+
       unless n[:depart].nil?
         if n[:depart].empty?
           n[:depart] = nil
         else
           /:/ =~ n[:depart]
           n[:depart] = Time.local(2018,12,19,$`,$')
+        end
+      end
+
+      # 0104追加
+      unless n[:by].nil?
+        if n[:by].empty?
+          n[:by] = nil
+        else
+          /:/ =~ n[:by]
+          n[:by] = Time.local(2018,12,19,$`,$')
         end
       end
 
@@ -69,14 +84,16 @@ class DestinationFormController < ApplicationController
     #                         {:arrive=>nil,:stay=>nil}
     #                       ]
     #           }
+    # 今後想定するparamsの形
     # params = { :origin => "Tsukuba", :destinations => ["静岡駅","熱海駅","栃木駅","東京ディズニーシー"],
-    #           :options => [{:depart=>nil},
-    #                         {:arrive=>nil,:stay=>nil},
-    #                         {:arrive=>nil,:stay=>nil},
-    #                         {:arrive=>nil,:stay=>nil},
-    #                         {:arrive=>nil,:stay=>nil}
+    #           :options => [{:depart=>nil,:arrive=>nil,:stay=>nil,:by=>nil},
+    #                         {:arrive=>nil,:stay=>nil,:by=>nil},
+    #                         {:arrive=>nil,:stay=>nil,:by=>nil},
+    #                         {:arrive=>nil,:stay=>nil,:by=>nil},
+    #                         {:arrive=>nil,:stay=>nil,:by=>nil}
     #                       ]
     #           }
+
 
     def search(params)
       # 1. Google Map API で所要時間を取得する
@@ -139,7 +156,8 @@ class DestinationFormController < ApplicationController
     def initialize_arrays_for_search
       @paths = [*1..@destinations.length].permutation(@destinations.length).to_a
       @paths.map{ |p| p.unshift(0) }
-
+      # 0104追加分(時ちょうどに過ごす配列)
+      @by = Array.new(@paths.length).map{Array.new(@destinations.length+1,nil)}
       @arrival = Array.new(@paths.length).map{Array.new(@destinations.length+1,nil)}
       @stay = Array.new(@paths.length).map{Array.new(@destinations.length+1,3600)}
       @departure = Array.new(@paths.length).map{Array.new(@destinations.length+1,nil)}
@@ -162,15 +180,40 @@ class DestinationFormController < ApplicationController
               @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
             end
           else
-            @departure[i][j] = @arrival[i][j]
-            # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
-            @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
+            # 0104書き換え(~時までにの指定(:by)がない場合＝今まで)
+            if @by[i][j].nil?
+              @departure[i][j] = @arrival[i][j]
+              # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
+              @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
+
+            # 0104書き換え(~時までにの指定(:by)がある場合＝追加)
+            else
+              unless @departure[i][j-1].nil?
+                # ややこしいが、一時的にbyに値を保存しておく
+                # そして、のちに元々のbyのコピーである@arrivalで@availableの判定をする
+                @by[i][j] = @departure[i][j-1]+@time_matrix[@paths[i][j-1]][@paths[i][j]]
+                @departure[i][j] = @by[i][j]
+                # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
+                @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
+              else
+                # 前の条件がないときは、byの時刻がそのまま到着時刻になる(これまで同様)
+                # @arrivalについては、set_searchの時に予め値を写している
+                @departure[i][j] = @by[i][j]
+                # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
+                @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
+              end
+            end
           end
 
           if @departure[i][j-1].nil?
             @available[i] = true
           elsif @departure[i][j-1]+@time_matrix[@paths[i][j-1]][@paths[i][j]] <= @arrival[i][j]
             @available[i] = true
+            # 0104追加 判定に成功した場合、@arrivalを適切な値に戻す
+            # 0104 if→unlessに変更
+            unless @by[i][j].nil?
+              @arrival[i][j] = @by[i][j]
+            end
           else
             @available[i] = false
             break
@@ -183,7 +226,14 @@ class DestinationFormController < ApplicationController
       @paths.each_with_index { |path,i|
         path.each_with_index { |point,j|
           options = params[:options][point]
+          
           @arrival[i][j] = options[:arrive] unless options[:arrive].nil?
+          # 0104追加(byの有無判定*uiで一方しか入力させない)
+          @by[i][j] = options[:by] unless options[:by].nil?
+          # 0104追加 available判定に必要
+          if options[:by].present?
+            @arrival[i][j] = @by[i][j]
+          end
           @departure[i][j] = options[:depart] unless options[:depart].nil?
           @stay[i][j] = options[:stay].to_i*60 unless options[:stay].nil?
         }
@@ -250,7 +300,7 @@ class DestinationFormController < ApplicationController
           @scores[i] = 9999999999999999999999
           next
         end
-        
+
 
         path.each_with_index{|point,j|
           next if j==0
@@ -299,6 +349,7 @@ class DestinationFormController < ApplicationController
           @routes.push(@destinations[point-1])
           # 時間指定が全くない場合の記述2
           unless @arrival.all?{|ar| ar.all?{|a| a.nil?}}
+            # 0104書き換え
             stringer += "　到着： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
           else
             stringer += "<br>"
@@ -313,6 +364,7 @@ class DestinationFormController < ApplicationController
 
         # 時間指定が全くない場合の記述3
         unless @departure.all?{|de| de.all?{|d| d.nil?}} or @arrival.all?{|ar| ar.all?{|a| a.nil?}}
+          # 0104
           stringer += "　到着： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
           stringer += "　出発： " + @departure[best_path][j].strftime("%H:%M") + "<br>"
           stringer += "↓" + "<br>"
