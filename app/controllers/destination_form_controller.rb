@@ -195,12 +195,16 @@ class DestinationFormController < ApplicationController
                 @departure[i][j] = @by[i][j]
                 # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
                 @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
-              else
+              # 不要になったもの  
+              # else
                 # 前の条件がないときは、byの時刻がそのまま到着時刻になる(これまで同様)
                 # @arrivalについては、set_searchの時に予め値を写している
-                @departure[i][j] = @by[i][j]
+                # !!!!!!!!!!!!!!!!!!!!重要!!!!!!!!!!この仕様によりバグが発生する
+                # (解決策)→uiの部分で解決!byを指定する時は、開始時間を強制的に入力させるようにする
+                # でないと、いずれのルートも可能になるから
+                # @departure[i][j] = @by[i][j]
                 # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
-                @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
+                # @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
               end
             end
           end
