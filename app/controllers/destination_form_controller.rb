@@ -251,6 +251,7 @@ class DestinationFormController < ApplicationController
           next
         end
         
+
         path.each_with_index{|point,j|
           next if j==0
           @scores[i] += score_function.call(i,j)
