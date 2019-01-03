@@ -239,16 +239,25 @@ class DestinationFormController < ApplicationController
         }
       end
       @paths.each_with_index{|path,i|
-        puts @available[i]
-
+        # puts @available[i]
         # break→nextに修正(全てのスコアが0の問題解決)
 
-        next if @available[i]==false
+        # 1/4追加(@available[i]==falseなiに対して@scores[i]=0でなくすために外れ値を用意)
+        # next if @available ...の前に実行する必要あり
+        # if scores[i]=0は不適切(この時点では全てに該当するから)
+        
+        if @available[i]==false
+          @scores[i] = 9999999999999999999999
+          next
+        end
+        
+
         path.each_with_index{|point,j|
           next if j==0
           @scores[i] += score_function.call(i,j)
         }
-        puts "["+i.to_s+"] score"+@scores[i].to_s
+        # puts "["+i.to_s+"] score"+@scores[i].to_s
+        
         best_path = i if @scores[i]<=@scores[best_path]
       }
       best_path
