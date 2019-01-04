@@ -3,6 +3,9 @@ class DestinationFormController < ApplicationController
   require 'uri'
   require 'json'
 
+  def home
+  end
+
   def new
   end
 
@@ -336,8 +339,8 @@ class DestinationFormController < ApplicationController
       @routes.push(@origin)
       # 時間指定が全くない場合の記述1
       unless @departure.all?{|de| de.all?{|d| d.nil?}}
-        stringer += "　出発：" + @departure[best_path][0].strftime("%H:%M")  + "<br>"
-        stringer += "↓" + "<br>"
+        stringer += "　出発：" + @departure[best_path][0].strftime("%H:%M")  + "<br><br>"
+        stringer += "↓" + "<br><br>"
       else
         stringer += "<br>"
       end

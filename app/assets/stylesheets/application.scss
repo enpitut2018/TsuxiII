@@ -10,6 +10,7 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
+ *= require_self
 */
  @import "bootstrap";
  .box-center{
@@ -22,24 +23,6 @@
   margin: 0.5em 0;/*前後の余白*/
   padding: 0;
 }
-
-/*ボタン装飾
-.hidden_box label {
-  display: inline-block;
-  text-decoration: none;
-  border: solid 2px rgb(0, 0, 0);
-  background: #ffffff;
-  color: rgb(0, 0, 0);
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
-  border-radius: 50%;
-  text-align: center;
-  vertical-align: middle;
-  overflow: hidden;
-  transition: .4s;
-}
-*/
 
 /*ボタン装飾*/
 .hidden_box label {
@@ -98,46 +81,22 @@ h5 {
 
 // カードデザインCSS
 .card {
-  margin: 30px auto;
-  width: 350px;
+  margin: 40px auto;
+  width: 400px;
   background: #fff;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px #ccc;
-}
-.card-img {
-  border-radius: 5px 5px 0 0;
-  max-width: 100%;
-  height: auto;
-}
-.card-content {
-  padding: 20px;
-}
-.card-title {
-  font-size: 20px;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #333;
-}
-.card-text {
-  color: #777;
-  font-size: 14px;
-  line-height: 1.5;
-}
-.card-link {
-  text-align: center;
-  border-top: 1px solid #eee;
-  padding: 20px;
-}
-.card-link a {
-  text-decoration: none;
-  color: #0bd;
-  margin: 0 10px;
-}
-.card-link a:hover {
-  color: #0090aa;
+  border-radius: 10px;
+  box-shadow: 0 10px 50px #000000;
 }
 
-.margin-10 {
-  margin: 10px;
+.mb-3 {
+  width: 380px;
+  margin: 10px 10px;
 }
 
+.no-card {
+  margin: 40px auto;
+  width: 400px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 50px #000000;
+}
