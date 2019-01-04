@@ -1,6 +1,8 @@
-<div class="container">
-  <h3>検索結果</h3>
-
+<div style="text-align:center;">
+  <br>
+  <h1>推奨ルート</h1>
+  <div class="no-card">
+  <!--
   ルート:<%= @routes %><br>
 
   ベストパス:<%= @best_path %><br>
@@ -25,19 +27,23 @@
 
   origin:<%= @origin %><br>
   destinations:<%= @destinations %><br>
+  -->
+  <br><br>
+  <%= simple_format(@string) %><br>
+  </div>
 
-  string:<%= simple_format(@string) %><br>
-
-  <% if @mapnotview.nil? %>
-    <div id='map' class="mt-4" style="width:600px; height:600px"></div>
-  <% end %>
-
-
-</div>
-
-
-
-
+  <h1>位置関係</h1>
+  </div>
+  <div class="inner">
+  <br>
+    <% if @mapnotview.nil? %>
+      <div id='map' style="width:400px; height:400px;" ></div>
+    <% end %>
+  <br><br>
+  </div>
 
 <script>map.js</script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDRj-HjvK8Jz8IHzMeWkcnhcG1FMpi6aNM&callback=initMap" ></script>
+
+
+<%= stylesheet_link_tag "home/home", :media => "all" %>
