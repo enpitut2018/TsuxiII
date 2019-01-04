@@ -332,39 +332,39 @@ class DestinationFormController < ApplicationController
           stringer += "<h2>条件に合うルートはありませんでした</h2><br>"
           return stringer
       end
-
-      stringer +=  "出発地：" + @origin + "<br>"
+      stringer += "1:" + "出発地  " + @origin + "<br>"
 
       # 行く順序に並べ替える
       @routes.push(@origin)
       # 時間指定が全くない場合の記述1
       unless @departure.all?{|de| de.all?{|d| d.nil?}}
-        stringer += "　出発：" + @departure[best_path][0].strftime("%H:%M")  + "<br><br>"
+        stringer += "　出発時刻：" + @departure[best_path][0].strftime("%H:%M")  + "<br><br>"
         stringer += "↓" + "<br><br>"
       else
-        stringer += "<br>"
+        stringer += "↓<br>"
       end
 
       @paths[best_path].each_with_index{|point,j|
         next if j==0
         # @destinations+originの数=@destinations.length-1+1(origin)=@destinations.length
         stopindex = @destinations.length
+        q = j + 1
         if j == stopindex
-          stringer += "到着地点：" + @destinations[point-1] + "<br>"
+          stringer += q.to_s + ":到着地点  " + @destinations[point-1] + "<br>"
 
           # 行く順序に並べ替える
           @routes.push(@destinations[point-1])
           # 時間指定が全くない場合の記述2
           unless @arrival.all?{|ar| ar.all?{|a| a.nil?}}
             # 0104書き換え
-            stringer += "　到着： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
+            stringer += "　到着時刻： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
           else
             stringer += "<br>"
           end
             return stringer
         end
 
-        stringer += "地点：" + @destinations[point-1] + "<br>"
+        stringer += q.to_s + ":経由地点  " + @destinations[point-1] + "<br>"
 
         # 行く順序に並べ替える
         @routes.push(@destinations[point-1])
@@ -372,11 +372,11 @@ class DestinationFormController < ApplicationController
         # 時間指定が全くない場合の記述3
         unless @departure.all?{|de| de.all?{|d| d.nil?}} or @arrival.all?{|ar| ar.all?{|a| a.nil?}}
           # 0104
-          stringer += "　到着： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
-          stringer += "　出発： " + @departure[best_path][j].strftime("%H:%M") + "<br>"
+          stringer += "　到着時刻： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
+          stringer += "　出発時刻： " + @departure[best_path][j].strftime("%H:%M") + "<br>"
           stringer += "↓" + "<br>"
         else
-          stringer += "<br>"
+          stringer += "↓<br>"
         end
       }
       return stringer
