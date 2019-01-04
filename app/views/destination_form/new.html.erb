@@ -1,6 +1,10 @@
 <div class="container mt-5">
   <%= form_tag("/create", method: "post", class: "box-center") do %>
     <h5>使い方:時間の入力は半角の「10:10」のような形式で指定してください</h5>
+
+    <h5>まずは、観光エリアを都道府県単位で入力してください</h5>
+    <h1 class="text-center">観光エリアを入力してください</h1>
+    <%= text_field_tag(:erea, '', :class=>'mb-3 mt-1', :placeholder=>'出発地を入力') %>
     <h1 class="text-center">出発地を入力してください</h1>
     <%= text_field_tag(:origin, '', :class=>'mb-3 mt-1', :placeholder=>'出発地を入力') %>
 
