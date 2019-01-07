@@ -23,7 +23,7 @@
             <%= text_field_tag('options[][by]', '', :class=>'mb-3', :placeholder=>'到着時間(目安にする場合)を入力  (例)13:15 ') %>
 
             <h6>滞在時間を入力してください</h6>
-            <select class="ui search dropdown　mb-3" name =<%=('options[][stay]')%>>
+            <select class="ui search dropdown" name =<%=('options[][stay]')%>>
               <option value="" selected>指定なし</option>
               <% for h in 0..23 %>
                 <option value="<%=h%>"><%=h%>時間</option> 
