@@ -8,10 +8,14 @@
     </div>
     <br>
     <div id="items">
+  <%= hidden_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
+  <%= hidden_field_tag('options[][stay]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
+  <div id="items">
       <%= hidden_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
       <%= hidden_field_tag('options[][stay]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
+
+        <h2 class="text-center">❷目的地を設定してください</h2>
         <div id="list">
-          <h2 class="text-center">❷目的地を設定してください</h2>
           <section class="card" id="item">
             <br>
             <%= text_field_tag('destinations[]', '', :class=>'mb-3', :placeholder=>'目的地を入力  (例)富士サファリパーク') %>
@@ -19,8 +23,7 @@
             <%= text_field_tag('options[][by]', '', :class=>'mb-3', :placeholder=>'到着時間(目安にする場合)を入力  (例)13:15 ') %>
 
             <h6>滞在時間を入力してください</h6>
-            <select class="ui search dropdown mb-3" name =<%=('options[][stay]')%>
-               <!--https://code.i-harness.com/ja/q/35ae32を参考にデフォルト値の作成 -->
+            <select class="ui search dropdown" name =<%=('options[][stay]')%>>
               <option value="" selected>指定なし</option>
               <% for h in 0..23 %>
                 <option value="<%=h%>"><%=h%>時間</option> 
@@ -29,9 +32,9 @@
             <input type="button" value="－" class="del btn rounded-circle p-0 mb-3" style="width:2rem;height:2rem">
           </section>
           <input type="button" value="＋" class="add btn rounded-circle p-0" style="width:2rem;height:2rem">
-          <br>
         </div>
-    </div>
+  </div>
+  </div>
     <br>
     <%= submit_tag("検索する", :class=>"btn")%>
     <br><br><br><br>
