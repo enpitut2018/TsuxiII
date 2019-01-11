@@ -44,7 +44,6 @@ html {
     background: #343a40;
     color: white;
     padding: 0.3rem 3.4rem;
-    margin-right: 2.6rem;
     box-shadow: 0 0 0 black;
     transition: all 0.2s;
     &:hover{
@@ -52,8 +51,8 @@ html {
     }
   }
 
-  .btn:last-child {
-    margin: 0;
+  .rounded-circle {
+    margin-bottom: 0;
   }
 
   .inner {
