@@ -3,41 +3,34 @@
   <%= form_tag("/create", method: "post", class: "box-center") do %>
     <h2 class="text-center">❶出発地を固定してください</h2>
     <div class="card">
-      <%= text_field_tag(:origin, '', :class=>'mb-3', :placeholder=>'出発地を入力  (例)つくば駅') %>
-      <%= text_field_tag('options[][depart]', '', :class=>'mb-3', :placeholder=>'出発時間を入力  (例)10:10 ') %>
+      <%= text_field_tag(:origin, '', :placeholder=>'出発地を入力  (例)つくば駅') %>
+      <%= text_field_tag('options[][depart]', '', :class=> 'mb-0', :placeholder=>'出発時間を入力  (例)10:10 ') %>
     </div>
-    <br>
-    <div id="items">
-  <%= hidden_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
-  <%= hidden_field_tag('options[][stay]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
+
   <div id="items">
-      <%= hidden_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
-      <%= hidden_field_tag('options[][stay]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
+      <%= hidden_field_tag('options[][arrive]', '', :placeholder=>'時間を入力') %>
+      <%= hidden_field_tag('options[][stay]', '', :placeholder=>'時間を入力') %>
 
         <h2 class="text-center">❷目的地を設定してください</h2>
         <div id="list">
           <section class="card" id="item">
-            <br>
-            <%= text_field_tag('destinations[]', '', :class=>'mb-3', :placeholder=>'目的地を入力  (例)富士サファリパーク') %>
-            <%= text_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'到着時間(固定する場合)を入力  (例)13:15 ') %>
-            <%= text_field_tag('options[][by]', '', :class=>'mb-3', :placeholder=>'到着時間(目安にする場合)を入力  (例)13:15 ') %>
+            <%= text_field_tag('destinations[]', '', :placeholder=>'目的地を入力  (例)富士サファリパーク') %>
+            <%= text_field_tag('options[][arrive]', '', :placeholder=>'到着時間(固定する場合)を入力  (例)13:15 ') %>
+            <%= text_field_tag('options[][by]', '', :placeholder=>'到着時間(目安にする場合)を入力  (例)13:15 ') %>
 
-            <h6>滞在時間を入力してください</h6>
+            <p>滞在時間を入力してください</p>
             <select class="ui search dropdown" name =<%=('options[][stay]')%>>
               <option value="" selected>指定なし</option>
               <% for h in 0..23 %>
                 <option value="<%=h%>"><%=h%>時間</option>
               <% end %>
             </select>
-            <input type="button" value="－" class="del btn rounded-circle p-0 mb-3" style="width:2rem;height:2rem">
+            <input type="button" value="－" class="del btn rounded-circle p-0 " style="width:2rem;height:2rem">
           </section>
           <input type="button" value="＋" class="add btn rounded-circle p-0" style="width:2rem;height:2rem">
         </div>
   </div>
-  </div>
-    <br>
     <%= submit_tag("検索する", :class=>"btn")%>
-    <br><br><br><br>
   <% end %>
 <p class="message"></p>
 
