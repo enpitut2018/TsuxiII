@@ -1,7 +1,8 @@
+<%= stylesheet_link_tag "home/home", :media => "all" %>
 <div class="container mt-5">
   <%= form_tag("/create", method: "post", class: "box-center") do %>
     <h2 class="text-center">❶出発地を固定してください</h2>
-    <div class="no-card">
+    <div class="card">
       <%= text_field_tag(:origin, '', :class=>'mb-3', :placeholder=>'出発地を入力  (例)つくば駅') %>
       <%= text_field_tag('options[][depart]', '', :class=>'mb-3', :placeholder=>'出発時間を入力  (例)10:10 ') %>
     </div>
@@ -25,7 +26,7 @@
             <select class="ui search dropdown" name =<%=('options[][stay]')%>>
               <option value="" selected>指定なし</option>
               <% for h in 0..23 %>
-                <option value="<%=h%>"><%=h%>時間</option> 
+                <option value="<%=h%>"><%=h%>時間</option>
               <% end %>
             </select>
             <input type="button" value="－" class="del btn rounded-circle p-0 mb-3" style="width:2rem;height:2rem">
@@ -42,6 +43,3 @@
 
 </div>
 </div>
-
-<%= stylesheet_link_tag "home/home", :media => "all" %>
-  
