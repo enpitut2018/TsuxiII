@@ -3,26 +3,8 @@ html {
   }
   body {
     font-family: "Questrial", sans-serif;
-    background-color: #ffec63;
-    background-image: linear-gradient(
-        45deg,
-        #ffd966 25%,
-        transparent 25%,
-        transparent 75%,
-        #ffd966 75%,
-        #ffd966
-      ),
-      linear-gradient(
-        -45deg,
-        #ffd966 25%,
-        transparent 25%,
-        transparent 75%,
-        #ffd966 75%,
-        #ffd966
-      );
-    background-size: 60px 60px;
-    background-position: 0 0;
-    animation: slide 4s infinite linear;
+    background-image: url("background.png");
+    background-size: cover;
   }
   
   @keyframes slide {
@@ -34,7 +16,8 @@ html {
       background-position: -120px 60px;
     }
   }
-  
+
+
   .modal {
     position: absolute;
     left: 50%;
@@ -50,13 +33,15 @@ html {
     background: white;
     box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
   }
+
   .message {
     font-size:5.0rem;
     margin-bottom: 1.6rem;
     margin-top: 0;
+    font-family: serif;
   }
   .btn {
-      font-family:inherit;
+    font-family:inherit;
     font-size: inherit;
     background: white;
     padding: 0.3rem 3.4rem;
@@ -86,11 +71,29 @@ html {
     justify-content: space-between;
   }
 
-  a {color: black;
-    }
+  a {
+    color: black;
+  }
+
   a:hover {
     color: black;
-    }
-.inner{
-    margin-left: 29rem;
-}
+  }
+
+  .inner {  
+    margin-left: 24rem;
+  }
+
+// ヘルプページCSS
+  .helpclass{
+    text-align: center;
+  }
+
+  .test {
+    width: 15%;
+    height: auto;
+    border: 1px solid #000000;;
+  }
+
+  .div_1 {
+    float: left;
+  }
