@@ -2,20 +2,28 @@ html {
     font-size: 18px;
   }
   body {
-    font-family: "Questrial", sans-serif;
+    font-family: 'Sawarabi Gothic', sans-serif;
     background-image: url("background.png");
     background-size: cover;
     background-attachment: fixed;
+  }
+
+  .roboto{
+    font-family: 'Roboto', sans-serif;
   }
 
   a:hover {
     text-decoration: none;
   }
 
-  h1 {
+  h1.main-title {
     font-size:5.0rem;
-    margin-bottom: 1.6rem;
+    margin-bottom: 20px;
     margin-top: 0;
+  }
+
+  h5 {
+    margin-bottom: 20px;
   }
 
   .container {
