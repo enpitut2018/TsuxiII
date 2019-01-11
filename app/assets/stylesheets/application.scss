@@ -17,67 +17,14 @@
   text-align: center;
 }
 
-
-/*全体*/
-.hidden_box {
-  margin: 0.5em 0;/*前後の余白*/
-  padding: 0;
-}
-
-/*ボタン装飾*/
-.hidden_box label {
-  padding: 8px;
-  // font-weight: bold;
-  // border: solid 2px black;
-  cursor :pointer;
-}
-
-/*ボタンホバー時*/
-.hidden_box label:hover {
-  background: rgb(0, 0, 0);
-  color:#ffffff;
-}
-
-/*チェックは見えなくする*/
-.hidden_box input {
-  display: none;
-}
-
-/*中身を非表示にしておく*/
-.hidden_box .hidden_show {
-  height: 0;
-  padding: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: 0.8s;
-}
-
-/*クリックで中身表示*/
-.hidden_box input:checked ~ .hidden_show {
-  padding: 10px 0;
-  height: auto;
-  opacity: 1;
-}
-
 .mt-4{
   margin-top: 4rem;
 }
 
-// ヘルプページCSS
-.test{
-  width: 15%;
-  height: auto;
-  border: 1px solid #000000;;
-}
-
-.helpclass{
-  text-align: center;
-}
 
 h5 {
   margin: 10px;
 }
-
 
 // カードデザインCSS
 .card {
