@@ -23,20 +23,19 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto|Sawarabi+Gothic" rel="stylesheet">
   </head>
   <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-      <%= link_to "Mappy", root_path, { :class => "navbar-brand roboto" } %>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <%= link_to "使い方", {:controller => "destination_form", :action => "help"}, { :class => "nav-link" } %>
-          </li>
-        </ul>
-      </div>
-
-    </nav>
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <%= link_to "Mappy", root_path, { :class => "navbar-brand roboto" } %>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <%= link_to "使い方", {:controller => "destination_form", :action => "help"}, { :class => "nav-link" } %>
+            </li>
+          </ul>
+        </div>
+      </nav>
     <%= yield %>
   </body>
 </html>

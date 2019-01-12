@@ -3,8 +3,14 @@
   <%= form_tag("/create", method: "post", class: "box-center") do %>
     <h2 class="text-center">❶出発地を固定してください</h2>
     <div class="card">
-      <%= text_field_tag(:origin, '', :class=>'mb-3', :placeholder=>'出発地を入力  (例)つくば駅') %>
-      <%= text_field_tag('options[][depart]', '', :class=>'mb-3', :placeholder=>'出発時間を入力  (例)10:10 ') %>
+      <div class="cp_tooltip">
+        <%= text_field_tag(:origin, '', :class=>'mb-3', :placeholder=>'出発地を入力') %>
+        <p class="cp_tooltiptext">出発地を入力しよう！</br>ここが起点になるよ(例)つくば駅</p>
+      </div>
+      <div class="cp_tooltip2">
+        <%= text_field_tag('options[][depart]', '', :class=>'mb-3', :placeholder=>'出発時間を入力') %>
+        <p class="cp_tooltiptext2">出発時間を入力してね</br>※注意10:10や1:35のように入力してください</p>
+      </div>
     </div>
     <br>
     <div id="items">
@@ -18,17 +24,29 @@
         <div id="list">
           <section class="card" id="item">
             <br>
-            <%= text_field_tag('destinations[]', '', :class=>'mb-3', :placeholder=>'目的地を入力  (例)富士サファリパーク') %>
-            <%= text_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'到着時間(固定する場合)を入力  (例)13:15 ') %>
-            <%= text_field_tag('options[][by]', '', :class=>'mb-3', :placeholder=>'到着時間(目安にする場合)を入力  (例)13:15 ') %>
+            <div class="cp_tooltip3">
+              <%= text_field_tag('destinations[]', '', :class=>'mb-3', :placeholder=>'目的地を入力') %>
+              <p class="cp_tooltiptext3">駅名、町名、施設名</br>何でも検索できるよ(例)東京タワー, 筑波大学</p>
+            </div>
+            <div class="cp_tooltip4">
+              <%= text_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'到着時間(固定する場合)') %>
+              <p class="cp_tooltiptext4">入力した時間”に”行きたい時は</br>ここに入力してね(例)12:15</p>
+            </div>
+            <div class="cp_tooltip5">
+              <%= text_field_tag('options[][by]', '', :class=>'mb-3', :placeholder=>'到着時間(目安にする場合)') %>
+              <p class="cp_tooltiptext5">入力した時間”までに”行ければいい時は</br>ここに入力してね(例)12:15</p>
+            </div>
 
             <h6>滞在時間を入力してください</h6>
-            <select class="ui search dropdown" name =<%=('options[][stay]')%>>
-              <option value="" selected>指定なし</option>
-              <% for h in 0..23 %>
-                <option value="<%=h%>"><%=h%>時間</option>
-              <% end %>
-            </select>
+            <div class="cp_tooltip6">
+              <select class="ui search dropdown mb-3" name =<%=('options[][stay]')%>>
+                <option value="" selected>指定なし</option>
+                <% for h in 0..23 %>
+                  <option value="<%=h%>"><%=h%>時間</option>
+                <% end %>
+              </select>
+              <p class="cp_tooltiptext6">最後に,入力した目的地の滞在予定時間を教えてね</br>「指定なし」は1時間で計算するよ</p>
+            </div>
             <input type="button" value="－" class="del btn rounded-circle p-0 mb-3" style="width:2rem;height:2rem">
           </section>
           <input type="button" value="＋" class="add btn rounded-circle p-0" style="width:2rem;height:2rem">
