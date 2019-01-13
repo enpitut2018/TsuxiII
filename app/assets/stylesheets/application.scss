@@ -33,15 +33,26 @@
 // カードデザインCSS
 .card {
   margin: 40px auto;
-  width: 400px;
+  width: 500px;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 1px 10px #000000;
+  padding: 30px;
 }
 
-.mb-3 {
-  width: 380px;
-  margin: 10px 10px;
+input {
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+input[type="submit"]{
+  width: 500px;
+  margin-top: 40px;
+  padding: 15px;
+}
+
+select {
+  margin-bottom: 40px;
 }
 
 .no-card {
