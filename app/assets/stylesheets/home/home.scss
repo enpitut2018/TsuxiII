@@ -1,3 +1,11 @@
+@mixin max-screen($break-point) {
+  @media screen and (max-width: $break-point) {
+    @content;
+  }
+}
+
+$sp_break_point: 576px;
+
 html {
     font-size: 18px;
   }
@@ -17,13 +25,16 @@ html {
   }
 
   h1.main-title {
-    font-size:5.0rem;
+    font-size: 5.0rem;
     margin-bottom: 20px;
     margin-top: 0;
   }
 
   h5 {
     margin-bottom: 20px;
+    @include max-screen($sp_break_point) {
+      margin-bottom: 40px;
+    }
   }
 
   .container {
@@ -34,6 +45,9 @@ html {
       top: 30%;
       left: 50%;
       transform: translateX(-50%);
+      @include max-screen($sp_break_point) {
+        top: 20%;
+      }
     }
   }
 
@@ -48,6 +62,11 @@ html {
     transition: all 0.2s;
     &:hover{
       background-color: lighten(#343a40, 10%);
+    }
+    @include max-screen($sp_break_point) {
+      padding: 0.8rem 3.4rem;
+      width: 80%;
+      margin-bottom: 45px;
     }
   }
 

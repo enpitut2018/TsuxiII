@@ -12,7 +12,15 @@
  *
  *= require_self
 */
- @import "bootstrap";
+$sp_break_point: 576px;
+
+@mixin max-screen($break-point) {
+  @media screen and (max-width: $break-point) {
+    @content;
+  }
+}
+
+@import "bootstrap";
 
  body{
    font-family: 'Sawarabi Gothic', sans-serif;
@@ -38,6 +46,9 @@
   border-radius: 10px;
   box-shadow: 0 1px 10px #000000;
   padding: 30px;
+  @media screen and (max-screen: 576px) {
+    width: 700px;
+  }
 }
 
 input {
