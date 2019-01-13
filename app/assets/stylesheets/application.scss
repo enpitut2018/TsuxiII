@@ -12,7 +12,28 @@
  *
  *= require_self
 */
- @import "bootstrap";
+$sp_break_point: 576px;
+
+@mixin max-screen($break-point) {
+  @media screen and (max-width: $break-point) {
+    @content;
+  }
+}
+
+@import "bootstrap";
+
+@include max-screen($sp_break_point){
+  h2 {
+    font-size: 1.3rem;
+  }
+}
+
+html {
+  font-size: 16px;
+  @include max-screen($sp_break_point) {
+    font-size: 14px;
+  }
+}
 
  body{
    font-family: 'Sawarabi Gothic', sans-serif;
@@ -38,6 +59,18 @@
   border-radius: 10px;
   box-shadow: 0 1px 10px #000000;
   padding: 30px;
+  @include max-screen($sp_break_point) {
+    width: 100%;
+    padding: 15px;
+    margin: 25px auto;
+  }
+
+  &.mb-80 {
+    margin-bottom: 80px;
+    @include max-screen($sp_break_point) {
+      margin-bottom: 60px;
+    }
+  }
 }
 
 input {
@@ -49,6 +82,9 @@ input[type="submit"]{
   width: 500px;
   margin-top: 40px;
   padding: 15px;
+  @include max-screen($sp_break_point) {
+    width: 100%;
+  }
 }
 
 select {
