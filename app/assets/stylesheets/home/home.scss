@@ -17,6 +17,7 @@ html {
     background-image: url("background.png");
     background-size: cover;
     background-attachment: fixed;
+    background-repeat: no-repeat;
     @include max-screen($sp_break_point) {
       background-position: center right 20%;
     }
