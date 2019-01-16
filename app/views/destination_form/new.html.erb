@@ -1,6 +1,7 @@
 <%= stylesheet_link_tag "home/home", :media => "all" %>
 <div class="container mt-5">
   <%= form_tag("/create", method: "post", class: "box-center") do %>
+
     <h2 class="text-center">❶出発地を固定してください</h2>
     <div class="card">
       <div class="cp_tooltip">
@@ -13,12 +14,12 @@
       </div>
     </div>
     <br>
-    <div id="items">
-  <%= hidden_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
-  <%= hidden_field_tag('options[][stay]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
   <div id="items">
-      <%= hidden_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
-      <%= hidden_field_tag('options[][stay]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
+    <%= hidden_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
+    <%= hidden_field_tag('options[][stay]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
+  </div>
+
+  <div id="items">
 
         <h2 class="text-center">❷目的地を設定してください</h2>
         <div id="list">
@@ -51,7 +52,6 @@
           </section>
           <input type="button" value="＋" class="add btn rounded-circle p-0" style="width:2rem;height:2rem">
         </div>
-  </div>
   </div>
     <br>
     <%= submit_tag("検索する", :class=>"btn")%>
