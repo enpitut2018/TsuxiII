@@ -1,6 +1,6 @@
 <div class="container mt-5">
   <%= form_tag("/create", method: "post", class: "box-center") do %>
-    <h2 class="text-center">❶出発地を固定してください</h2>
+    <h2 class="text-center">❶出発地を設定してください</h2>
     <div class="no-card">
       <%= text_field_tag(:origin, '', :class=>'mb-3', :placeholder=>'出発地を入力  (例)つくば駅') %>
       <%= text_field_tag('options[][depart]', '', :class=>'mb-3', :placeholder=>'出発時間を入力  (例)10:10 ') %>
