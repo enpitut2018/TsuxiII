@@ -12,32 +12,83 @@
  *
  *= require_self
 */
- @import "bootstrap";
+$sp_break_point: 576px;
+
+@mixin max-screen($break-point) {
+  @media screen and (max-width: $break-point) {
+    @content;
+  }
+}
+
+@import "bootstrap";
+
+@include max-screen($sp_break_point){
+  h2 {
+    font-size: 1.3rem;
+  }
+}
+
+html {
+  font-size: 16px;
+  @include max-screen($sp_break_point) {
+    font-size: 14px;
+  }
+}
+
+ body{
+   font-family: 'Sawarabi Gothic', sans-serif;
+ }
+
  .box-center{
   text-align: center;
+}
+
+.roboto{
+  font-family: 'Roboto', sans-serif;
 }
 
 .mt-4{
   margin-top: 4rem;
 }
 
-
-h5 {
-  margin: 10px;
-}
-
 // カードデザインCSS
 .card {
   margin: 40px auto;
-  width: 400px;
+  width: 500px;
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 10px 50px #000000;
+  box-shadow: 0 1px 10px #000000;
+  padding: 30px;
+  @include max-screen($sp_break_point) {
+    width: 100%;
+    padding: 15px;
+    margin: 25px auto;
+  }
+
+  &.mb-80 {
+    margin-bottom: 80px;
+    @include max-screen($sp_break_point) {
+      margin-bottom: 60px;
+    }
+  }
 }
 
-.mb-3 {
-  width: 380px;
-  margin: 10px 10px;
+input {
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+input[type="submit"]{
+  width: 500px;
+  margin-top: 40px;
+  padding: 15px;
+  @include max-screen($sp_break_point) {
+    width: 100%;
+  }
+}
+
+select {
+  margin-bottom: 40px;
 }
 
 .no-card {
@@ -47,3 +98,221 @@ h5 {
   border-radius: 10px;
   box-shadow: 0 10px 50px #000000;
 }
+
+// 吹き出しのデザイン
+.cp_tooltip {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+}
+.cp_tooltip .cp_tooltiptext {
+	position: absolute;
+	z-index: 1;
+	top: -5px;
+	right: 105%;
+	visibility: hidden;
+	/*width: auto;*/
+	white-space: nowrap;
+	padding: 0.3em 0.5em;
+	transition: opacity 1s;
+	text-align: center;
+	opacity: 0;
+	color: #ffffff;
+	border-radius: 6px;
+	background-color: #33cc99;
+}
+.cp_tooltip .cp_tooltiptext::after {
+	position: absolute;
+	top: 40%;
+	left: 101%;
+	margin-left: -5px;
+	content: ' ';
+	border: 5px solid transparent;
+	border-left-color: #33cc99;
+}
+.cp_tooltip:hover .cp_tooltiptext {
+	visibility: visible;
+	opacity: 1;
+}
+
+//吹き出しのデザイン
+.cp_tooltip2 {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+}
+.cp_tooltip2 .cp_tooltiptext2 {
+	position: absolute;
+	z-index: 1;
+	top: -5px;
+	right: 105%;
+	visibility: hidden;
+	/*width: auto;*/
+	white-space: nowrap;
+	padding: 0.3em 0.5em;
+	transition: opacity 1s;
+	text-align: center;
+	opacity: 0;
+	color: #ffffff;
+	border-radius: 6px;
+	background-color: #33cc99;
+}
+.cp_tooltip2 .cp_tooltiptext2::after {
+	position: absolute;
+	top: 40%;
+	left: 101%;
+	margin-left: -5px;
+	content: ' ';
+	border: 5px solid transparent;
+	border-left-color: #33cc99;
+}
+.cp_tooltip2:hover .cp_tooltiptext2 {
+	visibility: visible;
+	opacity: 1;
+}
+
+//吹き出しのデザイン
+.cp_tooltip3 {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+}
+.cp_tooltip3 .cp_tooltiptext3 {
+	position: absolute;
+	z-index: 1;
+	top: -5px;
+	right: 105%;
+	visibility: hidden;
+	/*width: auto;*/
+	white-space: nowrap;
+	padding: 0.3em 0.5em;
+	transition: opacity 1s;
+	text-align: center;
+	opacity: 0;
+	color: #ffffff;
+	border-radius: 6px;
+	background-color: #33cc99;
+}
+.cp_tooltip3 .cp_tooltiptext3::after {
+	position: absolute;
+	top: 40%;
+	left: 101%;
+	margin-left: -5px;
+	content: ' ';
+	border: 5px solid transparent;
+	border-left-color: #33cc99;
+}
+.cp_tooltip3:hover .cp_tooltiptext3 {
+	visibility: visible;
+	opacity: 1;
+}
+
+//吹き出しのデザイン
+.cp_tooltip4 {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+}
+.cp_tooltip4 .cp_tooltiptext4 {
+	position: absolute;
+	z-index: 1;
+	top: -5px;
+	right: 105%;
+	visibility: hidden;
+	/*width: auto;*/
+	white-space: nowrap;
+	padding: 0.3em 0.5em;
+	transition: opacity 1s;
+	text-align: center;
+	opacity: 0;
+	color: #ffffff;
+	border-radius: 6px;
+	background-color: #33cc99;
+}
+.cp_tooltip4 .cp_tooltiptext4::after {
+	position: absolute;
+	top: 40%;
+	left: 101%;
+	margin-left: -5px;
+	content: ' ';
+	border: 5px solid transparent;
+	border-left-color: #33cc99;
+}
+.cp_tooltip4:hover .cp_tooltiptext4 {
+	visibility: visible;
+	opacity: 1;
+}
+
+//吹き出しのデザイン
+.cp_tooltip5 {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+}
+.cp_tooltip5 .cp_tooltiptext5 {
+	position: absolute;
+	z-index: 1;
+	top: -5px;
+	right: 105%;
+	visibility: hidden;
+	/*width: auto;*/
+	white-space: nowrap;
+	padding: 0.3em 0.5em;
+	transition: opacity 1s;
+	text-align: center;
+	opacity: 0;
+	color: #ffffff;
+	border-radius: 6px;
+	background-color: #33cc99;
+}
+.cp_tooltip5 .cp_tooltiptext5::after {
+	position: absolute;
+	top: 40%;
+	left: 101%;
+	margin-left: -5px;
+	content: ' ';
+	border: 5px solid transparent;
+	border-left-color: #33cc99;
+}
+.cp_tooltip5:hover .cp_tooltiptext5 {
+	visibility: visible;
+	opacity: 1;
+}
+
+//吹き出しのデザイン
+.cp_tooltip6 {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+}
+.cp_tooltip6 .cp_tooltiptext6 {
+	position: absolute;
+	z-index: 1;
+	top: -5px;
+	right: 105%;
+	visibility: hidden;
+	/*width: auto;*/
+	white-space: nowrap;
+	padding: 0.3em 0.5em;
+	transition: opacity 1s;
+	text-align: center;
+	opacity: 0;
+	color: #ffffff;
+	border-radius: 6px;
+	background-color: #33cc99;
+}
+.cp_tooltip6 .cp_tooltiptext6::after {
+	position: absolute;
+	top: 40%;
+	left: 101%;
+	margin-left: -5px;
+	content: ' ';
+	border: 5px solid transparent;
+	border-left-color: #33cc99;
+}
+.cp_tooltip6:hover .cp_tooltiptext6 {
+	visibility: visible;
+	opacity: 1;
+}
+
+

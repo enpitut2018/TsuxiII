@@ -1,3 +1,4 @@
+
 <div style="text-align:center;">
   <br>
   <h1>推奨ルート</h1>
@@ -20,45 +21,47 @@
 
   ベストパス:<%= @best_path %><br>
 
-  スコア:<%= @scores %><br>
+    パス:<%= @paths %><br>
 
-  タイムマトリックス:<%= @time_matrix %><br>
+    ベストパス:<%= @best_path %><br>
 
-  パスの数:<%= @paths.length %><br>
+    スコア:<%= @scores %><br>
 
-  available:<%= @available %><br>
+    タイムマトリックス:<%= @time_matrix %><br>
 
-  by:<%= @by %><br>
+    パスの数:<%= @paths.length %><br>
 
-  arrival:<%= @arrival %><br>
+    available:<%= @available %><br>
 
-  departure:<%= @departure %><br>
+    by:<%= @by %><br>
 
-  <%= @departure %>
+    arrival:<%= @arrival %><br>
 
-  パス:<%= @paths %><br>
+    departure:<%= @departure %><br>
 
-  origin:<%= @origin %><br>
-  destinations:<%= @destinations %><br>
-  
-  -->
+    <%= @departure %>
 
-  <br><br>
-  <%= simple_format(@string) %><br>
-  </div>
+    パス:<%= @paths %><br>
 
-  <h1>マップ表示</h1>
-  </div>
-  <div class="inner">
-  <br>
-    <% if @mapnotview.nil? %>
-      <div id='map' style="width:400px; height:400px;" ></div>
-    <% end %>
-  <br><br>
-  </div>
+    origin:<%= @origin %><br>
+    destinations:<%= @destinations %><br>
+    
+    -->
 
-<script>map.js</script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDRj-HjvK8Jz8IHzMeWkcnhcG1FMpi6aNM&callback=initMap" ></script>
+    <br><br>
+    <%= simple_format(@string) %><br>
+    </div>
 
+    <h1>マップ表示</h1>
+    </div>
+    <div class="inner">
+    <br>
+      <% if @mapnotview.nil? %>
+        <div id='map' style="width:400px; height:400px;" ></div>
+      <% end %>
+    <br><br>
+    </div>
 
-<%= stylesheet_link_tag "home/home", :media => "all" %>
+  <script>map.js</script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDRj-HjvK8Jz8IHzMeWkcnhcG1FMpi6aNM&callback=initMap" ></script>
+</div>

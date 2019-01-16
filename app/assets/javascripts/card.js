@@ -12,7 +12,7 @@ $(document).on("click", ".del", function () {
     // <div id="item">を削除する
     target.remove();
   }else{
-   alert("最低1つ以上の目標地点を維持してください");
+   alert("目的地は最低1地点は入力しましょう");
   }
   console.log("bye");
 });
