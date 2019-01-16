@@ -106,6 +106,11 @@ class DestinationFormController < ApplicationController
       @origin = get_origin_from(result)
       @destinations = get_destination_from(result)
 
+      # 2-1. googleで正しくない値を検索した時のバリデーションを追加(0116)
+      if @origin=="" or @destinations.include?("")
+        return best_path = -1
+      end
+      
       # 3. 所要時間行列を作る
       @time_matrix = generate_time_matrix(result,@destinations.length+1)
 
