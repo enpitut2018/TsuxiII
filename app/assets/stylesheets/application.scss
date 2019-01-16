@@ -375,3 +375,17 @@ select {
   margin-top: 10px;
 }
 
+.essential::-webkit-input-placeholder {
+  color: #ff0000;
+  opacity: 0.5;
+}
+
+.essential::-moz-placeholder {
+  color: #ff0000;
+  opacity: 0.5;
+}
+
+.essential:-ms-input-placeholder {
+  color: #ff0000;
+  opacity: 0.5;
+}

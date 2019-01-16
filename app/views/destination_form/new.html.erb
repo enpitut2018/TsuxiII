@@ -6,13 +6,13 @@
     <div class="card">
       <div class="cp_tooltip">
       <div class="unti"></div>
-        <%= text_field_tag(:origin, '', :class=>'mb-3', :placeholder=>'出発地を入力', :required => true) %>
+        <%= text_field_tag(:origin, '', :class=>'mb-3 essential', :placeholder=>'出発地を入力　※必須', :required => true) %>
         <p class="cp_tooltiptext">出発地を入力しよう！</br>ここが起点になるよ(例)つくば駅</p>
       </div>
       <br>
       <div class="cp_tooltip2">
         <%= text_field_tag('options[][depart]', '', :class=>'mb-3', :placeholder=>'出発時間を入力') %>
-        <p class="cp_tooltiptext2">出発時間を入力してね</br>※注意10:10や1:35のように入力してください</p>
+        <p class="cp_tooltiptext2">出発時間を入力してね</br>(例)12:15</p>
       </div>
     </div>
     <br>
@@ -28,7 +28,7 @@
           <section class="card" id="item">
             <br>
             <div class="cp_tooltip3">
-              <%= text_field_tag('destinations[]', '', :class=>'mb-3', :placeholder=>'目的地を入力', :required => true) %>
+              <%= text_field_tag('destinations[]', '', :class=>'mb-3 essential', :placeholder=>'目的地を入力　※必須', :required => true) %>
               <p class="cp_tooltiptext3">駅名、町名、施設名</br>何でも検索できるよ(例)東京タワー, 筑波大学</p>
             </div>
             <div class="cp_tooltip4">
