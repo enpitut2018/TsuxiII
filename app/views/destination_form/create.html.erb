@@ -2,16 +2,16 @@
 <div class="container" id="create">
   <br>
   <h1 class="text-center">結果</h1>
-  <div class="card unti">
+  <div class="card">
     <br>
     <%= simple_format(@string) %>
   </div>
-  <br>
-  <div class="inner unti2">
+  <div class="inner">
     <% if @mapnotview.nil? %>
       <div id='map'></div>
     <% end %>
   </div>
   <script>map.js</script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDRj-HjvK8Jz8IHzMeWkcnhcG1FMpi6aNM&callback=initMap" ></script>
+  <br><br>
 </div>
