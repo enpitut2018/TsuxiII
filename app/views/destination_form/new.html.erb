@@ -2,9 +2,10 @@
 <div class="container mt-5">
   <%= form_tag("/create", method: "post", class: "box-center") do %>
 
-    <h2 class="text-center">❶出発地を固定してください</h2>
+    <h2>❶出発地を固定してください</h2>
     <div class="card">
       <div class="cp_tooltip">
+      <br>
         <%= text_field_tag(:origin, '', :class=>'mb-3', :placeholder=>'出発地を入力', :required => true) %>
         <p class="cp_tooltiptext">出発地を入力しよう！</br>ここが起点になるよ(例)つくば駅</p>
       </div>
@@ -21,7 +22,7 @@
 
   <div id="items">
 
-        <h2 class="text-center">❷目的地を設定してください</h2>
+        <h2>❷目的地を設定してください</h2>
         <div id="list">
           <section class="card" id="item">
             <br>
