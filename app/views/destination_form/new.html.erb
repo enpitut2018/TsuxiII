@@ -13,7 +13,6 @@
         <p class="cp_tooltiptext2">出発時間を入力してね</br>※注意10:10や1:35のように入力してください</p>
       </div>
     </div>
-    <br>
   <div id="items">
     <%= hidden_field_tag('options[][arrive]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
     <%= hidden_field_tag('options[][stay]', '', :class=>'mb-3', :placeholder=>'時間を入力') %>
@@ -24,7 +23,6 @@
         <h2 class="text-center">❷目的地を設定してください</h2>
         <div id="list">
           <section class="card" id="item">
-            <br>
             <div class="cp_tooltip3">
               <%= text_field_tag('destinations[]', '', :class=>'mb-3', :placeholder=>'目的地を入力', :required => true) %>
               <p class="cp_tooltiptext3">駅名、町名、施設名</br>何でも検索できるよ(例)東京タワー, 筑波大学</p>
