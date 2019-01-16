@@ -182,6 +182,18 @@ class DestinationFormController < ApplicationController
               # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
               @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
             end
+
+            # 0116追加(arrival=なし,by=ありで、かつ@departure[i][j-1]がnilの場合のバグを修正する)
+            # unless @by[i][j].nil?
+            #   if @departure[i][j-1].nil?
+            #     @arrival[i][j] = @by[i][j]
+            #     @by[i][j] = nil
+            #     @departure[i][j] = @arrival[i][j]
+            #     # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
+            #     @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
+            #   end
+            # end
+
           else
             # 0104書き換え(~時までにの指定(:by)がない場合＝今まで)
             if @by[i][j].nil?
@@ -199,15 +211,15 @@ class DestinationFormController < ApplicationController
                 # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
                 @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
               # 不要になったもの  
-              # else
+              else
                 # 前の条件がないときは、byの時刻がそのまま到着時刻になる(これまで同様)
                 # @arrivalについては、set_searchの時に予め値を写している
                 # !!!!!!!!!!!!!!!!!!!!重要!!!!!!!!!!この仕様によりバグが発生する
                 # (解決策)→uiの部分で解決!byを指定する時は、開始時間を強制的に入力させるようにする
                 # でないと、いずれのルートも可能になるから
-                # @departure[i][j] = @by[i][j]
+                @departure[i][j] = @by[i][j]
                 # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
-                # @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
+                @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
               end
             end
           end
@@ -232,6 +244,7 @@ class DestinationFormController < ApplicationController
     def set_search_options(params)
       @paths.each_with_index { |path,i|
         path.each_with_index { |point,j|
+          # point=0,1,2とかに成形した地点の名称を指す
           options = params[:options][point]
           
           @arrival[i][j] = options[:arrive] unless options[:arrive].nil?
@@ -291,7 +304,7 @@ class DestinationFormController < ApplicationController
           unless j == @destinations.length
             return 0
           else
-            return @arrival[i][j].to_i
+            return @arrival[i][j].to_i - @departure[i][0].to_i
           end
         }
       end
