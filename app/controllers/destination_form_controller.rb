@@ -21,6 +21,9 @@ class DestinationFormController < ApplicationController
     @dev2 = 0
     @dev3 = 0
     @api_key = ENV["API_KEY"]
+    # @result = ""
+    @error = 0
+  
 
     unless params[:origin].present?
       params[:origin] = "つくば駅"
@@ -101,7 +104,7 @@ class DestinationFormController < ApplicationController
     def search(params)
       # 1. Google Map API で所要時間を取得する
       result = ask_GoogleMap_API(params)
-
+      
       # 2. 出発地と目的地の場所をセットする
       @origin = get_origin_from(result)
       @destinations = get_destination_from(result)
@@ -119,6 +122,11 @@ class DestinationFormController < ApplicationController
       
       # 3. 所要時間行列を作る
       @time_matrix = generate_time_matrix(result,@destinations.length+1)
+
+      # 3-1. googleで正しくない値を検索した時のバリデーションを追加(0116)/帝国ホテルなど(車で行けない経路)/
+      if @error == 1
+        return best_path = -5
+      end
 
       # 4. パス検索のための前処理：配列を用意する
       initialize_arrays_for_search
@@ -158,6 +166,10 @@ class DestinationFormController < ApplicationController
 
       (0..length-2).each{ |i|
         (0..length-2).each{ |j|
+          if rows[i]["elements"][j]["status"] == "ZERO_RESULTS"
+            @error = 1
+            break
+          end  
           /^(\d*)\s*(hour|min)?s?\s*(\d*)(\smin)?.*$/ =~ rows[i]["elements"][j]["duration"]["text"]
           $2=="hour" ? time_matrix[i][j+1] = $1.to_i * 3600 : time_matrix[i][j+1] = $1.to_i * 60
           time_matrix[i][j+1] += $3.to_i * 60 unless $4.nil?
@@ -373,6 +385,12 @@ class DestinationFormController < ApplicationController
       if best_path==-4
         stringer += "<h2>出発地点は見つかりません</h2><br>"
         stringer += "<h2>到着地点(の一部)が見つかりません</h2><br>"
+        return stringer
+      end
+
+      # 0117追加(海外と日本ルートの場合)
+      if best_path==-5
+        stringer += "<h2>車での経路が見つかりません</h2><br>"
         return stringer
       end
 
