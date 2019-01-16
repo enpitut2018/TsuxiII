@@ -95,9 +95,25 @@ body {
     }
   }
 
-  .inner {
-    margin-left: 24rem;
+  #create{
+    h2:first-of-type{
+      margin-top: 30px;
+    }
+    h2:nth-of-type(2){
+      margin-bottom: 20px;
+    }
+    .inner {
+      #map {
+        width: 400px;
+        height: 400px;
+        margin: auto;
+        @include max-screen($sp_break_point) {
+          width: 100%;
+        }
+      }
+    }
   }
+
 
 // ヘルプページCSS
   .helpclass{
