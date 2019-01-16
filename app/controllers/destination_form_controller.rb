@@ -405,7 +405,7 @@ class DestinationFormController < ApplicationController
           # 時間指定が全くない場合の記述2
           unless @arrival.all?{|ar| ar.all?{|a| a.nil?}}
             # 0104書き換え
-            stringer += "&ensp;&ensp;&ensp;到着時刻 " + "<strong>" + @arrival[best_path][j].strftime("%H:%M") + "</strong>" + "<br><br>"
+            stringer += "&ensp;&ensp;&ensp;到着時刻 " + "<strong>" + @arrival[best_path][j].strftime("%H:%M") + "</strong>" + "<br>"
           else
             stringer += "<br><br>"
           end
