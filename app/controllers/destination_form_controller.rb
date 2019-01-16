@@ -435,7 +435,7 @@ class DestinationFormController < ApplicationController
     @best_path = search(params)
     @string = stringer_best_schedule(@best_path)
 
-    if @best_path == -1
+    if @best_path < 0
       @mapnotview = 0
     end
 
