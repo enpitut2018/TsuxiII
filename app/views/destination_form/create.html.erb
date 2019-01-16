@@ -1,12 +1,13 @@
 <%= stylesheet_link_tag "home/home", :media => "all" %>
 <div class="container" id="create">
-  <h2 class="text-center">推奨ルート</h2>
-  <div class="card">
+  <br>
+  <h1 class="text-center">結果</h1>
+  <div class="card unti">
+    <br>
     <%= simple_format(@string) %>
   </div>
-  <h2 class="text-center">マップ表示</h2>
   <br>
-  <div class="inner">
+  <div class="inner unti2">
     <% if @mapnotview.nil? %>
       <div id='map'></div>
     <% end %>

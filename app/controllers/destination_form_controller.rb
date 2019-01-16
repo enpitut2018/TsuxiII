@@ -378,16 +378,16 @@ class DestinationFormController < ApplicationController
 
       # 検索結果の日本語化1/3
       # stringer += "1:" + "出発地  " + @origin + "<br>"
-      stringer += "1:" + "出発地  " + params[:origin] + "<br>"
+      stringer += "1 ." + " 出発地  " + "<strong>" + params[:origin]+ "</strong>" + "<br><br>"
 
       # 行く順序に並べ替える
       @routes.push(@origin)
       # 時間指定が全くない場合の記述1
       unless @departure.all?{|de| de.all?{|d| d.nil?}}
-        stringer += "　出発時刻：" + @departure[best_path][0].strftime("%H:%M")  + "<br>"
-        stringer += "↓" + "<br>"
+        stringer += "&ensp;&ensp;&ensp;出発時刻 " + "<strong>" + @departure[best_path][0].strftime("%H:%M") + "</strong>" + "<br><br>"
+        stringer += "&ensp;&ensp;&ensp;&ensp;&ensp;↓" + "<br><br>"
       else
-        stringer += "↓<br>"
+        stringer += "&ensp;&ensp;&ensp;&ensp;&ensp;↓<br><br>"
       end
 
       @paths[best_path].each_with_index{|point,j|
@@ -398,23 +398,23 @@ class DestinationFormController < ApplicationController
         if j == stopindex
           # 検索結果の日本語化2/3
           # stringer += q.to_s + ":到着地点  " + @destinations[point-1] + "<br>"
-          stringer += q.to_s + ":到着地点  " + params[:destinations][point-1] + "<br>"
+          stringer += q.to_s + " . 到着地点  " + "<strong>" + params[:destinations][point-1] + "</strong>" + "<br><br>"
 
           # 行く順序に並べ替える
           @routes.push(@destinations[point-1])
           # 時間指定が全くない場合の記述2
           unless @arrival.all?{|ar| ar.all?{|a| a.nil?}}
             # 0104書き換え
-            stringer += "　到着時刻： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
+            stringer += "&ensp;&ensp;&ensp;到着時刻 " + "<strong>" + @arrival[best_path][j].strftime("%H:%M") + "</strong>" + "<br><br>"
           else
-            stringer += "<br>"
+            stringer += "<br><br>"
           end
             return stringer
         end
 
         # 検索結果の日本語化3/3
-        # stringer += q.to_s + ":経由地点  " + @destinations[point-1] + "<br>"
-        stringer += q.to_s + ":経由地点  " + params[:destinations][point-1] + "<br>"
+        # stringer += q.to_s + " : 経由地点  " + @destinations[point-1] + "<br>"
+        stringer += q.to_s + " . 経由地点  " + "<strong>" +  params[:destinations][point-1] + "</strong>" + "<br><br>"
 
         # 行く順序に並べ替える
         @routes.push(@destinations[point-1])
@@ -422,11 +422,11 @@ class DestinationFormController < ApplicationController
         # 時間指定が全くない場合の記述3
         unless @departure.all?{|de| de.all?{|d| d.nil?}} or @arrival.all?{|ar| ar.all?{|a| a.nil?}}
           # 0104
-          stringer += "　到着時刻： " + @arrival[best_path][j].strftime("%H:%M") + "<br>"
-          stringer += "　出発時刻： " + @departure[best_path][j].strftime("%H:%M") + "<br>"
-          stringer += "↓" + "<br>"
+          stringer += "&ensp;&ensp;&ensp;到着時刻 " + "<strong>" + @arrival[best_path][j].strftime("%H:%M") + "</strong>" + "<br><br>"
+          stringer += "&ensp;&ensp;&ensp;出発時刻 " + "<strong>" + @departure[best_path][j].strftime("%H:%M") + "</strong>" + "<br><br>"
+          stringer += "&ensp;&ensp;&ensp;&ensp;&ensp;↓" + "<br><br>"
         else
-          stringer += "↓<br>"
+          stringer += "&ensp;&ensp;&ensp;&ensp;&ensp;↓<br><br>"
         end
       }
       return stringer
