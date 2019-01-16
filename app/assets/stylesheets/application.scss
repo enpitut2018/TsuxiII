@@ -79,7 +79,7 @@ input {
 }
 
 input[type="submit"]{
-  width: 500px;
+  width: 250px;
   margin-top: 40px;
   padding: 15px;
   @include max-screen($sp_break_point) {
@@ -372,9 +372,5 @@ select {
 }
 
 .unti {
-  float: left;
-}
-
-.unti2 {
-  float: right;
+  margin-top: 10px;
 }
