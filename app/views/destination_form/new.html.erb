@@ -5,7 +5,7 @@
     <h2 class="text-center">❶出発地を固定してください</h2>
     <div class="card">
       <div class="cp_tooltip">
-        <%= text_field_tag(:origin, '', :class=>'mb-3', :placeholder=>'出発地を入力') %>
+        <%= text_field_tag(:origin, '', :class=>'mb-3', :placeholder=>'出発地を入力', :required => true) %>
         <p class="cp_tooltiptext">出発地を入力しよう！</br>ここが起点になるよ(例)つくば駅</p>
       </div>
       <div class="cp_tooltip2">
@@ -26,7 +26,7 @@
           <section class="card" id="item">
             <br>
             <div class="cp_tooltip3">
-              <%= text_field_tag('destinations[]', '', :class=>'mb-3', :placeholder=>'目的地を入力') %>
+              <%= text_field_tag('destinations[]', '', :class=>'mb-3', :placeholder=>'目的地を入力', :required => true) %>
               <p class="cp_tooltiptext3">駅名、町名、施設名</br>何でも検索できるよ(例)東京タワー, 筑波大学</p>
             </div>
             <div class="cp_tooltip4">
