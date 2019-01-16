@@ -5,10 +5,11 @@
     <h2>❶出発地を固定してください</h2>
     <div class="card">
       <div class="cp_tooltip">
-      <br>
+      <div class="unti"></div>
         <%= text_field_tag(:origin, '', :class=>'mb-3', :placeholder=>'出発地を入力', :required => true) %>
         <p class="cp_tooltiptext">出発地を入力しよう！</br>ここが起点になるよ(例)つくば駅</p>
       </div>
+      <br>
       <div class="cp_tooltip2">
         <%= text_field_tag('options[][depart]', '', :class=>'mb-3', :placeholder=>'出発時間を入力') %>
         <p class="cp_tooltiptext2">出発時間を入力してね</br>※注意10:10や1:35のように入力してください</p>
@@ -54,9 +55,8 @@
           <input type="button" value="＋" class="add btn rounded-circle p-0">
         </div>
   </div>
-    <br>
     <%= submit_tag("検索する", :class=>"btn")%>
-    <br><br><br><br>
+    <br><br>
   <% end %>
 <p class="message"></p>
 

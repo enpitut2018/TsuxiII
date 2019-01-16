@@ -79,7 +79,7 @@ input {
 }
 
 input[type="submit"]{
-  width: 500px;
+  width: 250px;
   margin-top: 40px;
   padding: 15px;
   @include max-screen($sp_break_point) {
@@ -370,3 +370,8 @@ select {
   box-shadow: 0 0 2px rgb(204, 204, 204);
   color: #6c757d;
 }
+
+.unti {
+  margin-top: 10px;
+}
+
