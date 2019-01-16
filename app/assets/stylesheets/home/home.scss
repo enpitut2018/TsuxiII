@@ -86,8 +86,8 @@ body {
 
   .rounded-circle {
     margin-bottom: 0;
-    width:2rem;
-    height:2rem;
+    width:4rem;
+    height:4rem;
     @include max-screen($sp_break_point) {
       width:4rem;
       height:4rem;
@@ -160,6 +160,9 @@ body {
       &:last-of-type::before {
         content: "A.";
         color: blue;
+      }
+      @include max-screen($sp_break_point) {
+        font-size: 14px;
       }
     }
   }
