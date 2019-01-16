@@ -129,3 +129,37 @@ body {
   .div_1 {
     float: left;
   }
+
+  h2:first-of-type {
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+  .q-a {
+    border-bottom: 2px dashed #000;
+    padding: 35px 30px;
+    margin-bottom: 0;
+    &:first-of-type {
+      border-top: 2px dashed #000;
+    }
+
+    li {
+      font-size: 20px;
+      list-style: none;
+      position: relative;
+      &::before {
+        position: absolute;
+        left: -1.5rem;
+      }
+      &:first-of-type{
+        margin-bottom: 15px;
+        &::before {
+          content: "Q.";
+          color: red;
+        }
+      }
+      &:last-of-type::before {
+        content: "A.";
+        color: blue;
+      }
+    }
+  }
