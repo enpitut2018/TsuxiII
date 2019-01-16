@@ -107,8 +107,14 @@ class DestinationFormController < ApplicationController
       @destinations = get_destination_from(result)
 
       # 2-1. googleで正しくない値を検索した時のバリデーションを追加(0116)
-      if @origin=="" or @destinations.include?("")
-        return best_path = -1
+      if @origin==""
+        if@destinations.include?("")
+          return best_path = -4
+        else
+          return best_path = -2
+        end
+      elsif @destinations.include?("")
+        return best_path = -3
       end
       
       # 3. 所要時間行列を作る
@@ -350,6 +356,26 @@ class DestinationFormController < ApplicationController
           stringer += "<h2>条件に合うルートはありませんでした</h2><br>"
           return stringer
       end
+
+      # 0116追加(出発地点が判別不可の場合)
+      if best_path==-2
+        stringer += "<h2>出発地点は見つかりません</h2><br>"
+        return stringer
+      end
+
+      # 0116追加(到着地点が判別不可の場合)
+      if best_path==-3
+        stringer += "<h2>到着地点(の一部)が見つかりません</h2><br>"
+        return stringer
+      end
+
+      # 0116追加(出発地点,到着地点が両者判別不可の場合)
+      if best_path==-4
+        stringer += "<h2>出発地点は見つかりません</h2><br>"
+        stringer += "<h2>到着地点(の一部)が見つかりません</h2><br>"
+        return stringer
+      end
+
       # 検索結果の日本語化1/3
       # stringer += "1:" + "出発地  " + @origin + "<br>"
       stringer += "1:" + "出発地  " + params[:origin] + "<br>"
