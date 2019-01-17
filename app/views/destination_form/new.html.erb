@@ -2,7 +2,19 @@
 <div class="container mt-5">
   <%= form_tag("/create", method: "post", class: "box-center") do %>
 
-    <h2>❶出発地を固定してください</h2>
+    <h2>❶移動手段を入力してください</h2>
+    <div class="card">
+      <div class="cp_tooltip">
+      <select class="dropdown mb-3" name =<%=('mode')%>>
+        <option value="driving" selected>車</option>
+        <option value="walking">徒歩</option>
+      </select>
+      <p class="cp_tooltiptext">移動手段を入力してね</br>選ばなければ車での経路を表示するよ</p>
+      </div>
+      <br>
+    </div>
+
+    <h2>❷出発地を設定してください</h2>
     <div class="card">
       <div class="cp_tooltip">
       <div class="unti"></div>
@@ -23,7 +35,7 @@
 
   <div id="items">
 
-        <h2>❷目的地を設定してください</h2>
+        <h2>❸目的地を設定してください</h2>
         <div id="list">
           <section class="card" id="item">
             <br>

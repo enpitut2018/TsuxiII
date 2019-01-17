@@ -145,8 +145,9 @@ class DestinationFormController < ApplicationController
       ori.push(params[:origin])
       ori.concat(params[:destinations].slice(0..params[:destinations].length-2))
       dst = params[:destinations]
+      selectedMode = params[:mode]
 
-      uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+ori.join("|")+'&destinations='+dst.join("|")+'&mode=driving&key='+@api_key)
+      uri = URI.encode('https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='+ori.join("|")+'&destinations='+dst.join("|")+'&mode='+selectedMode+'&key='+@api_key)
       json = Net::HTTP.get(URI.parse(uri))
       result = JSON.parse(json)
     end
@@ -388,9 +389,9 @@ class DestinationFormController < ApplicationController
         return stringer
       end
 
-      # 0117追加(海外と日本ルートの場合)
+      # 0117追加(海外と日本ルートの場合など)
       if best_path==-5
-        stringer += "<h2>車での経路が見つかりません</h2><br>"
+        stringer += "<h2>その移動手段での経路が見つかりません</h2><br>"
         return stringer
       end
 
