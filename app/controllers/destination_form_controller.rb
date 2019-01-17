@@ -23,12 +23,12 @@ class DestinationFormController < ApplicationController
     @api_key = ENV["API_KEY"]
     # @result = ""
     @error = 0
-  
+
 
     unless params[:origin].present?
       params[:origin] = "つくば駅"
     end
-    
+
     params[:destinations].each{ |n|
       unless n.present?
         n = nil
@@ -104,7 +104,7 @@ class DestinationFormController < ApplicationController
     def search(params)
       # 1. Google Map API で所要時間を取得する
       result = ask_GoogleMap_API(params)
-      
+
       # 2. 出発地と目的地の場所をセットする
       @origin = get_origin_from(result)
       @destinations = get_destination_from(result)
@@ -119,7 +119,7 @@ class DestinationFormController < ApplicationController
       elsif @destinations.include?("")
         return best_path = -3
       end
-      
+
       # 3. 所要時間行列を作る
       @time_matrix = generate_time_matrix(result,@destinations.length+1)
 
@@ -138,9 +138,9 @@ class DestinationFormController < ApplicationController
       calculate_schedule
       # 8. 実行可能なパスの中で一番いいパスを選択する
       select_best_path
-    end 
+    end
 
-    def ask_GoogleMap_API(params) 
+    def ask_GoogleMap_API(params)
       ori = []
       ori.push(params[:origin])
       ori.concat(params[:destinations].slice(0..params[:destinations].length-2))
@@ -169,7 +169,7 @@ class DestinationFormController < ApplicationController
           if rows[i]["elements"][j]["status"] == "ZERO_RESULTS"
             @error = 1
             break
-          end  
+          end
           /^(\d*)\s*(hour|min)?s?\s*(\d*)(\smin)?.*$/ =~ rows[i]["elements"][j]["duration"]["text"]
           $2=="hour" ? time_matrix[i][j+1] = $1.to_i * 3600 : time_matrix[i][j+1] = $1.to_i * 60
           time_matrix[i][j+1] += $3.to_i * 60 unless $4.nil?
@@ -233,7 +233,7 @@ class DestinationFormController < ApplicationController
                 @departure[i][j] = @by[i][j]
                 # stay[i][j]がない時のために分けて考える(不要:デフォで1時間)
                 @departure[i][j] += @stay[i][j] unless @stay[i][j].nil?
-              # 不要になったもの  
+              # 不要になったもの
               else
                 # 前の条件がないときは、byの時刻がそのまま到着時刻になる(これまで同様)
                 # @arrivalについては、set_searchの時に予め値を写している
@@ -260,7 +260,7 @@ class DestinationFormController < ApplicationController
             @available[i] = false
             break
           end
-        } 
+        }
       }
     end
 
@@ -269,7 +269,7 @@ class DestinationFormController < ApplicationController
         path.each_with_index { |point,j|
           # point=0,1,2とかに成形した地点の名称を指す
           options = params[:options][point]
-          
+
           @arrival[i][j] = options[:arrive] unless options[:arrive].nil?
           # 0104追加(byの有無判定*uiで一方しか入力させない)
           @by[i][j] = options[:by] unless options[:by].nil?
@@ -338,7 +338,7 @@ class DestinationFormController < ApplicationController
         # 1/4追加(@available[i]==falseなiに対して@scores[i]=0でなくすために外れ値を用意)
         # next if @available ...の前に実行する必要あり
         # if scores[i]=0は不適切(この時点では全てに該当するから)
-        
+
         if @available[i]==false
           @scores[i] = 9999999999999999999999
           next
@@ -350,7 +350,7 @@ class DestinationFormController < ApplicationController
           @scores[i] += score_function.call(i,j)
         }
         # puts "["+i.to_s+"] score"+@scores[i].to_s
-        
+
         best_path = i if @scores[i]<=@scores[best_path]
       }
       best_path
@@ -402,10 +402,10 @@ class DestinationFormController < ApplicationController
       @routes.push(@origin)
       # 時間指定が全くない場合の記述1
       unless @departure.all?{|de| de.all?{|d| d.nil?}}
-        stringer += "&ensp;&ensp;&ensp;出発時刻 " + "<strong>" + @departure[best_path][0].strftime("%H:%M") + "</strong>" + "<br><br>"
-        stringer += "&ensp;&ensp;&ensp;&ensp;&ensp;↓" + "<br><br>"
+        stringer += "出発時刻 " + "<strong>" + @departure[best_path][0].strftime("%H:%M") + "</strong>" + "<br><br>"
+        stringer += "↓" + "<br><br>"
       else
-        stringer += "&ensp;&ensp;&ensp;&ensp;&ensp;↓<br><br>"
+        stringer += "↓<br><br>"
       end
 
       @paths[best_path].each_with_index{|point,j|
@@ -440,11 +440,11 @@ class DestinationFormController < ApplicationController
         # 時間指定が全くない場合の記述3
         unless @departure.all?{|de| de.all?{|d| d.nil?}} or @arrival.all?{|ar| ar.all?{|a| a.nil?}}
           # 0104
-          stringer += "&ensp;&ensp;&ensp;到着時刻 " + "<strong>" + @arrival[best_path][j].strftime("%H:%M") + "</strong>" + "<br><br>"
-          stringer += "&ensp;&ensp;&ensp;出発時刻 " + "<strong>" + @departure[best_path][j].strftime("%H:%M") + "</strong>" + "<br><br>"
-          stringer += "&ensp;&ensp;&ensp;&ensp;&ensp;↓" + "<br><br>"
+          stringer += "到着時刻 " + "<strong>" + @arrival[best_path][j].strftime("%H:%M") + "</strong>" + "<br><br>"
+          stringer += "出発時刻 " + "<strong>" + @departure[best_path][j].strftime("%H:%M") + "</strong>" + "<br><br>"
+          stringer += "↓" + "<br><br>"
         else
-          stringer += "&ensp;&ensp;&ensp;&ensp;&ensp;↓<br><br>"
+          stringer += "↓<br><br>"
         end
       }
       return stringer
@@ -459,5 +459,5 @@ class DestinationFormController < ApplicationController
 
     # @trippath.print_best_schedule(@best_path)
   end
-  
+
 end
